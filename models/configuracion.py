@@ -8,7 +8,8 @@ class ProductividadVariable(models.Model):
     _name = 'hu_productividad.variable'
 
     name = fields.Char(string='Nombre', required=True)
-    active = fields.Boolean(string='Activo', default=True)
+    tipo = fields.Char(string='Tipo', required=True)
+    valor = fields.Float(string='Valor')
 
 
 class ProductividadMetodoCalculo(models.Model):

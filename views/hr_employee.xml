@@ -9,7 +9,17 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@name='hr_settings']" position="after">
                 <page string="Productividad" name="productividad">
-                    <field name="metodo_calculo_id"/>
+                    <group>
+                        <field name="metodo_calculo_id"/>
+                    </group>
+                    <h2>Variables</h2>
+                    <field name="variable_ids" string="Variables">
+                        <tree editable="bottom">
+                            <field name="variable_id"/>
+                            <field name="tipo"/>
+                            <field name="valor"/>
+                        </tree>
+                    </field>
                 </page>
             </xpath>
         </field>
