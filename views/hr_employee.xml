@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="hr_employee_productividad_page" model="ir.ui.view">
+        <field name="name">hr.employee.productividad.page</field>
+        <field name="model">hr.employee</field>
+        <field name="priority">21</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='hr_settings']" position="after">
+                <page string="Productividad" name="productividad">
+                    <field name="metodo_calculo_id"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

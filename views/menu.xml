@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record id="hu_productividad_action" model="ir.actions.act_window">
+            <field name="name">Productividad</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hu_productividad.productividad</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Vacío
+                  </p>
+                  <p>
+                    ...
+                  </p>
+            </field>
+        </record>
+
+        <record id="hu_productividad_empleado_action" model="ir.actions.act_window">
+            <field name="name">Empleados</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Vacío
+                  </p>
+                  <p>
+                    ...
+                  </p>
+            </field>
+        </record>
+
+        <record id="action_hu_productividad_variable" model="ir.actions.act_window">
+            <field name="name">Variables</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hu_productividad.variable</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crea una Variable
+              </p><p>
+                ...
+              </p>
+            </field>
+        </record>
+
+
+        <record id="action_hu_productividad_metodo_calculo" model="ir.actions.act_window">
+            <field name="name">Metodo de Cálculo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hu_productividad.metodo_calculo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crea un Método de Cálculo
+              </p><p>
+                ...
+              </p>
+            </field>
+        </record>
+
+
+        <!-- Menu principal -->
+        <menuitem id="hu_productividad_menu" name="Productividad" sequence="2" action="hu_productividad_action"/>
+
+        <!-- Productividad  -->
+        <menuitem id="submenu_hu_productividad_productividad" name="Productividad" parent="hu_productividad_menu" sequence="1" action="hu_productividad_action"/>
+
+        <!-- Empleados -->
+        <menuitem id="submenu_hu_productividad_empleado" name="Empleados" parent="hu_productividad_menu" sequence="2" action="hu_productividad_empleado_action"/>
+
+        <!-- Submenú Configuración -->
+        <menuitem id="submenu_hu_productividad_configuracion" name="Configuración" parent="hu_productividad_menu" sequence="3"/>
+        <menuitem id="submenu_hu_productividad_variable" name="Variables" parent="submenu_hu_productividad_configuracion" sequence="1" action="action_hu_productividad_variable"/>
+        <menuitem id="submenu_hu_productividad_metodo_calculo" name="Métodos de Cálculo" parent="submenu_hu_productividad_configuracion" sequence="2" action="action_hu_productividad_metodo_calculo"/>
+
+
+    </data>
+</openerp>

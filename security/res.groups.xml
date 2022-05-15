@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hu_productividad_lectura" model="res.groups">
+            <field name="name">Lectura</field>
+            <field name="category_id" ref="hu_productividad_application"/>
+        </record>
+
+        <record id="hu_productividad_admin" model="res.groups">
+            <field name="name">Administrador</field>
+            <field name="implied_ids" eval="[(4, ref('hu_productividad_lectura'))]"/>
+            <field name="category_id" ref="hu_productividad_application"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+    </data>
+</odoo>

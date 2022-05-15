@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Vista de Lista Productividad -->
+    <record model="ir.ui.view" id="hu_productividad_productividad_lista">
+        <field name="name">hu.productividad.productividad.lista</field>
+        <field name="model">hu_productividad.productividad</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date" readonly="1"/>
+                <field name="name" readonly="1"/>
+                <field name="monto_total_calculado" readonly="1"/>
+                <field name="estado" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

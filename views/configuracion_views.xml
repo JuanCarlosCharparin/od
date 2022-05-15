@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Vista de formulario de Método de Cálculo -->
+    <record model="ir.ui.view" id="hu_productividad_metodo_calculo_lista">
+        <field name="name">hu.productividad.metodo.calculo.lista</field>
+        <field name="model">hu_productividad.metodo_calculo</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <h2><field name="name"/></h2>
+                </group>
+                <notebook>
+                    <page name="empleados" string="Empleados">
+                        <group>
+                            <field name="empleado_ids" string="Empleados">
+                                <tree editable="bottom">
+                                    <field name="empleado_id"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+</odoo>
