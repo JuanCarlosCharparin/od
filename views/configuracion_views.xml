@@ -2,25 +2,53 @@
 <odoo>
 
     <!-- Vista de formulario de Método de Cálculo -->
-    <record model="ir.ui.view" id="hu_productividad_metodo_calculo_lista">
-        <field name="name">hu.productividad.metodo.calculo.lista</field>
+    <record model="ir.ui.view" id="hu_productividad_metodo_calculo_form">
+        <field name="name">hu.productividad.metodo.calculo.form</field>
         <field name="model">hu_productividad.metodo_calculo</field>
         <field name="arch" type="xml">
             <form>
                 <group>
                     <h2><field name="name"/></h2>
                 </group>
-                <notebook>
-                    <page name="empleados" string="Empleados">
-                        <group>
-                            <field name="empleado_ids" string="Empleados">
-                                <tree editable="bottom">
-                                    <field name="empleado_id"/>
-                                </tree>
-                            </field>
-                        </group>
-                    </page>
-                </notebook>
+                <group>
+                    <field name="variable_ids" string="Variables">
+                        <tree editable="bottom">
+                            <field name="variable_id"/>
+                            <field name="forma_calculo"/>
+                            <field name="base" attrs="{'readonly': [('forma_calculo', '!=', 'puntaje')]}"/>
+                            <field name="punto" attrs="{'readonly': [('forma_calculo', '!=', 'puntaje')]}"/>
+                            <field name="valor_punto" attrs="{'readonly': [('forma_calculo', '!=', 'puntaje')]}"/>
+                            <field name="porcentaje" attrs="{'readonly': [('forma_calculo', '!=', 'porcentaje_facturado')]}"/>
+                            <field name="valor_monto_fijo_cantidad" attrs="{'readonly': [('forma_calculo', '!=', 'monto_fijo_cantidad')]}"/>
+                            <field name="valor_monto_fijo" attrs="{'readonly': [('forma_calculo', '!=', 'monto_fijo')]}"/>
+                            <field name="base_formula_vieja" attrs="{'readonly': [('forma_calculo', '!=', 'formula_vieja')]}"/>
+                            <field name="punto_formula_vieja" attrs="{'readonly': [('forma_calculo', '!=', 'formula_vieja')]}"/>
+                            <field name="valor_punto_formula_vieja" attrs="{'readonly': [('forma_calculo', '!=', 'formula_vieja')]}"/>
+                        </tree>
+                    </field>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de formulario de Tipos de Puntos -->
+    <record model="ir.ui.view" id="hu_productividad_tipo_punto_form">
+        <field name="name">hu.productividad.tipo.punto.form</field>
+        <field name="model">hu_productividad.tipo_punto</field>
+        <field name="arch" type="xml">
+            <form string="Tipo de Punto">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="valor"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>

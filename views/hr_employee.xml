@@ -16,8 +16,8 @@
                     <field name="variable_ids" string="Variables">
                         <tree editable="bottom">
                             <field name="variable_id"/>
-                            <field name="tipo"/>
-                            <field name="valor"/>
+<!--                            <field name="tipo"/>-->
+<!--                            <field name="valor"/>-->
                         </tree>
                     </field>
                 </page>
