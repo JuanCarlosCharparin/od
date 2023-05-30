@@ -25,6 +25,7 @@
 
         # Views
         'views/productividad_views.xml',
+        'views/metodo_calculo_views.xml',
         'views/configuracion_views.xml',
         'views/hr_employee.xml',
 

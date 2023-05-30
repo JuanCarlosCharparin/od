@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Vista de formulario de Método de Cálculo -->
+    <record model="ir.ui.view" id="hu_productividad_metodo_calculo_form">
+        <field name="name">hu.productividad.metodo.calculo.form</field>
+        <field name="model">hu_productividad.metodo_calculo</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Nombre"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tipo"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <notebook>
+                        <page name="page_variables" string="Variables de cálculo">
+                            <field name="metodo_calculo_variable_ids" widget="section_and_note_one2many" mode="tree,kanban">
+                                <tree editable="bottom">
+                                    <field name="variable_id"/>
+                                    <field name="forma_calculo"/>
+                                    <field name="base" attrs="{'readonly': [('forma_calculo', 'not in', ['puntaje', 'formula_vieja'])]}"/>
+                                    <field name="tipo_punto_id" attrs="{'readonly': [('forma_calculo', 'not in', ['puntaje', 'formula_vieja'])]}"/>
+                                    <field name="valor_punto" attrs="{'readonly': [('forma_calculo', 'not in', ['puntaje', 'formula_vieja'])]}"/>
+                                    <field name="porcentaje" attrs="{'readonly': [('forma_calculo', '!=', 'porcentaje_facturado')]}"/>
+                                    <field name="valor_monto_fijo" attrs="{'readonly': [('forma_calculo', 'not in', ['monto_fijo', 'monto_fijo_cantidad'])]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

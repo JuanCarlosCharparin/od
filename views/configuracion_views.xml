@@ -1,36 +1,5 @@
 <?xml version="1.0"?>
 <odoo>
-
-    <!-- Vista de formulario de Método de Cálculo -->
-    <record model="ir.ui.view" id="hu_productividad_metodo_calculo_form">
-        <field name="name">hu.productividad.metodo.calculo.form</field>
-        <field name="model">hu_productividad.metodo_calculo</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
-                    <h2><field name="name"/></h2>
-                </group>
-                <group>
-                    <field name="variable_ids" string="Variables">
-                        <tree editable="bottom">
-                            <field name="variable_id"/>
-                            <field name="forma_calculo"/>
-                            <field name="base" attrs="{'readonly': [('forma_calculo', '!=', 'puntaje')]}"/>
-                            <field name="punto" attrs="{'readonly': [('forma_calculo', '!=', 'puntaje')]}"/>
-                            <field name="valor_punto" attrs="{'readonly': [('forma_calculo', '!=', 'puntaje')]}"/>
-                            <field name="porcentaje" attrs="{'readonly': [('forma_calculo', '!=', 'porcentaje_facturado')]}"/>
-                            <field name="valor_monto_fijo_cantidad" attrs="{'readonly': [('forma_calculo', '!=', 'monto_fijo_cantidad')]}"/>
-                            <field name="valor_monto_fijo" attrs="{'readonly': [('forma_calculo', '!=', 'monto_fijo')]}"/>
-                            <field name="base_formula_vieja" attrs="{'readonly': [('forma_calculo', '!=', 'formula_vieja')]}"/>
-                            <field name="punto_formula_vieja" attrs="{'readonly': [('forma_calculo', '!=', 'formula_vieja')]}"/>
-                            <field name="valor_punto_formula_vieja" attrs="{'readonly': [('forma_calculo', '!=', 'formula_vieja')]}"/>
-                        </tree>
-                    </field>
-                </group>
-            </form>
-        </field>
-    </record>
-
     <!-- Vista de formulario de Tipos de Puntos -->
     <record model="ir.ui.view" id="hu_productividad_tipo_punto_form">
         <field name="name">hu.productividad.tipo.punto.form</field>

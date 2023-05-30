@@ -15,6 +15,6 @@ class EmpleadoVariable(models.Model):
     _name = 'hu_productividad.empleado_variable'
 
     empleado_id = fields.Many2one('hr.employee', string='Empleado')
-    variable_id = fields.Many2one('hu_productividad.variable', string='Variable')
+    variable_id = fields.Many2one('hu_productividad.prestacion', string='Prestación')
     # tipo = fields.Char(related='variable_id.tipo')
     # valor = fields.Float(related='variable_id.valor')

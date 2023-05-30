@@ -17,6 +17,9 @@ class Productividad(models.Model):
         for productividad in self:
             productividad.name = str(productividad.mes) + ' - ' + str(productividad.anio)
 
+#Crear clase productividad_empleado donde se va a almacenar el calculo de productividad de cada empleado
+#Crear clase productividad_empleado_detalle donde se va a almacenar cada detalle de como se calculó la productividad de ese empleado
+
 
 class ProductividadEmpleado(models.Model):
     _name = 'hu_productividad.empleado'
