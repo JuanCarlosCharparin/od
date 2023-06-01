@@ -10,16 +10,17 @@
             <xpath expr="//page[@name='hr_settings']" position="after">
                 <page string="Productividad" name="productividad">
                     <group>
+                        <field name="id_alephoo"/>
                         <field name="metodo_calculo_id"/>
                     </group>
                     <h2>Variables</h2>
-                    <field name="variable_ids" string="Variables">
-                        <tree editable="bottom">
-                            <field name="variable_id"/>
-<!--                            <field name="tipo"/>-->
-<!--                            <field name="valor"/>-->
-                        </tree>
-                    </field>
+<!--                    <field name="variable_ids" string="Variables">-->
+<!--                        <tree editable="bottom">-->
+<!--                            <field name="variable_id"/>-->
+<!--&lt;!&ndash;                            <field name="tipo"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <field name="valor"/>&ndash;&gt;-->
+<!--                        </tree>-->
+<!--                    </field>-->
                 </page>
             </xpath>
         </field>
