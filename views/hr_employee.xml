@@ -11,7 +11,7 @@
                 <page string="Productividad" name="productividad">
                     <group>
                         <field name="id_alephoo"/>
-                        <field name="metodo_calculo_id"/>
+                        <field name="metodo_calculo_ids" widget="many2many_tags"/>
                     </group>
                     <h2>Variables</h2>
 <!--                    <field name="variable_ids" string="Variables">-->
