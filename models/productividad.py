@@ -25,24 +25,30 @@ class Productividad(models.Model):
         productividad = self.buscar_o_crear_productividad(mes, anio)
         empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad_mes_actual(limite=limite_empleados)
         for empleado in empleados:
-            #Se contempla la posibilidad de que un empleado tenga más de un método de calculo por lo que se hace un bucle
             calculos_productividad_empleado = empleado.calcular_productividad(mes, anio)
+            productividad_empleado = self.env['hu_productividad.productividad_empleado'].create({
+                'productividad_id': productividad.id,
+                'employee_id': empleado.id,
+                'metodo_calculo_id': calculo_pe.metodo_calculo_id
+            })
+            importe_total = 0
             for calculo_pe in calculos_productividad_empleado:
-                #@TODO completar creacion de productividad_empleado, productividad_empleado_detalle y prod_empleado_det_turno_alephoo
-                self.env['hu_productividad.productividad_empleado'].create({
-                    'productividad_id': productividad.id,
-                    'employee_id': empleado.id,
-                    'metodo_calculo_id': '',
-                    'forma_calculo': '',
-                    'base': '',
-                    'tipo_punto_id': '',
-                    'valor_punto': '',
-                    'porcentaje': '',
-                    'valor_monto_fijo': '',
-                    'cantidad_practicas_realizadas': '',
-                    'importe': '',
-                    'productividad_empleado_detalle_ids': '',
+                self.env['hu_productividad.productividad_empleado_detalle'].create({
+                    'productividad_empleado_id': productividad_empleado.id,
+                    'importe': calculo_pe.importe,
+                    'cantidad_practicas_realizadas': calculo_pe.cantidad_practicas_realizadas,
+                    'metodo_calculo_variable_id': calculo_pe.metodo_calculo_variable_id,
+                    'forma_calculo': calculo_pe.forma_calculo,
+                    'base': calculo_pe.base,
+                    'tipo_punto_id': calculo_pe.tipo_punto_id,
+                    'valor_punto': calculo_pe.valor_punto,
+                    'porcentaje': calculo_pe.porcentaje,
+                    'valor_monto_fijo': calculo_pe.valor_monto_fijo
                 })
+                importe_total += calculo_pe.importe
+                # @TODO PROBAR y completar creacion de prod_empleado_det_turno_alephoo
+
+            productividad_empleado.importe = importe_total
 
     def buscar_o_crear_productividad(self, mes, anio):
         productividad = self.search([

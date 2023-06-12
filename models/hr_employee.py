@@ -69,13 +69,14 @@ class Employee(models.Model):
 
 
                 calculos_productividad.append({
+                    'turno_alephoo_ids': turnos_alephoo.ids,
                     'importe': importe,
                     'cantidad_practicas_realizadas': len(turnos_alephoo),
                     'metodo_calculo_id': metodo_calculo.id,
                     'metodo_calculo_variable_id': metodo_calculo_variable.id,
                     'forma_calculo': metodo_calculo_variable.forma_calculo,
                     'base': metodo_calculo_variable.base,
-                    'tipo_punto_id': metodo_calculo_variable.tipo_punto_id,
+                    'tipo_punto_id': metodo_calculo_variable.tipo_punto_id.id,
                     'valor_punto': metodo_calculo_variable.valor_punto,
                     'porcentaje': metodo_calculo_variable.porcentaje,
                     'valor_monto_fijo': metodo_calculo_variable.valor_monto_fijo
