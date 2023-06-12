@@ -36,7 +36,7 @@ class Productividad(models.Model):
 
     computado_en_productividad = fields.Boolean(string='Computado en productividad', default=False)
 
-    def sincronizar_datos_alephoo(self, anio_facturacion, mes_facturacion, turno_fecha_desde, turno_fecha_hastaturno_fecha_hasta, medico_id):
+    def sincronizar_datos_alephoo(self, anio_facturacion, mes_facturacion, turno_fecha_desde, turno_fecha_hasta, medico_id):
         query = """
 SELECT 
   tp.id AS TURNOID, 
