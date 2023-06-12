@@ -22,7 +22,14 @@ class ProductividadMetodoCalculoVariable(models.Model):
     _description = 'Productividad - Variable de método de cálculo'
 
     metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
-    prestacion_id = fields.Many2one('hu_productividad.prestacion', string='Prestación') # @TODO esto debe ser un M2M
+    # prestacion_id = fields.Many2one('hu_productividad.prestacion', string='Prestación') # @TODO esto debe ser un M2M
+    prestacion_ids = fields.Many2many(
+        'hu_productividad.prestacion',
+        relation='hu_prod_metodo_calculo_var_prestacion',
+        column1='metodo_calculo_variable_id',
+        column2='prestacion_id',
+        string='Prestaciones'
+    )
     forma_calculo = fields.Selection([
         ('puntaje', 'Por puntaje'),
         ('porcentaje_facturado', 'Porcentaje facturado'),

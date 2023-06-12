@@ -19,12 +19,69 @@ class Employee(models.Model):
         string='Métodos de cálculo'
     )
 
-    def calcular_productividad(self):
-        #@TODO calcular la productividad del empleado y retornar un array con los detalles según cada método de calculo que tenga el empleado
+    def calcular_productividad(self, mes, anio):
+        #@TODO valores hardcodeados
+        turno_fecha_desde = '2023-02-01'
+        turno_fecha_hasta = '2023-02-28'
+        anio_facturacion = 2023
+        mes_facturacion = 3
+        self.env['hu_productividad.turno_alephoo'].sincronizar_datos_alephoo(anio_facturacion, mes_facturacion, turno_fecha_desde, turno_fecha_hasta, self.id_alephoo)
+        calculos_productividad = []
         for metodo_calculo in self.metodo_calculo_ids:
-            completar_codigo = 1
+            for metodo_calculo_variable in metodo_calculo.metodo_calculo_variable_ids:
+                #Por cada variable, buscar los turnos que tenga el médico con esas practicas
+                codigo_prestaciones = []
+                for prestacion in metodo_calculo_variable.prestacion_ids:
+                    codigo_prestaciones.append(prestacion.codigo)
+                turnos_alephoo = self.env['hu_productividad.turno_alephoo'].search([
+                    ('employee_id', '=', self.id),
+                    ('fecha', '>=', turno_fecha_desde),
+                    ('fecha', '<=', turno_fecha_hasta),
+                    ('computado_en_productividad', '=', False),
+                    ('prestacion_codigo', 'in', codigo_prestaciones)
+                ])
 
-        return [{}, {}]
+                importe = 0
+                #Calculo por puntaje: (Cantidad prestac de alephoo - Base) * Valor del punto) * Tipo_punto.valor
+                if metodo_calculo_variable.forma_calculo == 'puntaje':
+                    importe = (len(turnos_alephoo) - metodo_calculo_variable.base) * metodo_calculo_variable.valor_punto * metodo_calculo_variable.tipo_punto_id.valor
+
+                #Calculo por porcentaje_facturado: (sumatoria del total de lo facturado por esa prestación) * %
+                elif metodo_calculo_variable.forma_calculo == 'porcentaje_facturado':
+                    total_facturado = 0
+                    for turno_alephoo in turnos_alephoo:
+                        total_facturado += turno_alephoo.importe_total
+
+                    importe = total_facturado * metodo_calculo_variable.porcentaje / 100
+
+                #Calculo por monto_fijo_cantidad: cantidad de turnos de esa prestación * monto fijo
+                elif metodo_calculo_variable.forma_calculo == 'monto_fijo_cantidad':
+                    importe = len(turnos_alephoo) * metodo_calculo_variable.valor_monto_fijo
+
+                #Calculo por monto_fijo
+                elif metodo_calculo_variable.forma_calculo == 'monto_fijo':
+                    importe = metodo_calculo_variable.valor_monto_fijo
+
+                #Calculo por formula_vieja: ((Cantidad de prestac de alephoo  * valor del punto) - Base) * Tipo_punto.valor
+                elif metodo_calculo_variable.forma_calculo == 'formula_vieja':
+                    importe = ((len(turnos_alephoo) * metodo_calculo_variable.valor_punto) - metodo_calculo_variable.base) * metodo_calculo_variable.tipo_punto_id.valor
+
+
+
+                calculos_productividad.append({
+                    'importe': importe,
+                    'cantidad_practicas_realizadas': len(turnos_alephoo),
+                    'metodo_calculo_id': metodo_calculo.id,
+                    'metodo_calculo_variable_id': metodo_calculo_variable.id,
+                    'forma_calculo': metodo_calculo_variable.forma_calculo,
+                    'base': metodo_calculo_variable.base,
+                    'tipo_punto_id': metodo_calculo_variable.tipo_punto_id,
+                    'valor_punto': metodo_calculo_variable.valor_punto,
+                    'porcentaje': metodo_calculo_variable.porcentaje,
+                    'valor_monto_fijo': metodo_calculo_variable.valor_monto_fijo
+                })
+
+        return calculos_productividad
 
 
     def get_empleados_a_calcular_productividad(self, mes, anio, limite=False):

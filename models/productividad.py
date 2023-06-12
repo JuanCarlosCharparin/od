@@ -16,6 +16,7 @@ class Productividad(models.Model):
     estado = fields.Selection(selection=[('pendiente', 'Pendiente'), ('cobrado', 'Cobrado')], string='Estado', default='pendiente')
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
+    #@TODO esto debe ser una accion planificada
     def generar_productividad_mensual(self, mes, anio, limite_empleados):
         if not mes or anio:
             mes = datetime.now().year
@@ -25,9 +26,9 @@ class Productividad(models.Model):
         empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad_mes_actual(limite=limite_empleados)
         for empleado in empleados:
             #Se contempla la posibilidad de que un empleado tenga más de un método de calculo por lo que se hace un bucle
-            calculos_productividad_empleado = empleado.calcular_productividad()
+            calculos_productividad_empleado = empleado.calcular_productividad(mes, anio)
             for calculo_pe in calculos_productividad_empleado:
-                #@TODO completar creacion de productividad_empleado y productividad_empleado_detalle
+                #@TODO completar creacion de productividad_empleado, productividad_empleado_detalle y prod_empleado_det_turno_alephoo
                 self.env['hu_productividad.productividad_empleado'].create({
                     'productividad_id': productividad.id,
                     'employee_id': empleado.id,
@@ -58,13 +59,6 @@ class Productividad(models.Model):
         return productividad
 
 
-# @TODO
-# Crear clase que almacene la info leída de Alephoo y buscar la forma de que se vincule al profesional - LISTO
-# Crear clase productividad_empleado donde se va a almacenar el calculo de productividad de cada empleado - LISTO (a completar con mas info cdo se realicen los calculos)
-# Crear clase productividad_empleado_detalle donde se va a almacenar cada detalle de como se calculó la productividad de ese empleado - LISTO
-# Crear acción planificada que mensualmente cree la productividad
-
-
 class ProductividadEmpleado(models.Model):
     _name = 'hu_productividad.productividad_empleado'
     _description = 'Productividad - Productividad empleado'
@@ -73,11 +67,20 @@ class ProductividadEmpleado(models.Model):
     productividad_id = fields.Many2one('hu_productividad.productividad', string='Productividad')
     employee_id = fields.Many2one('hr.employee', string='Empleado')
     metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
-    cantidad_practicas_realizadas = fields.Integer(string='Cantidad de prácticas realizadas')
     importe = fields.Float(string='Importe')
     productividad_empleado_detalle_ids = fields.One2many('hu_productividad.productividad_empleado_detalle', 'productividad_empleado_id')
 
-    #Datos del método de calculo que serán persistidos
+
+class ProductividadEmpleadoDetalle(models.Model):
+    _name = 'hu_productividad.productividad_empleado_detalle'
+    _description = 'Productividad - Productividad empleado detalle'
+
+    productividad_empleado_id = fields.Many2one('hu_productividad.productividad_empleado', string='Productividad empleado')
+    importe = fields.Float(string='Importe')
+    cantidad_practicas_realizadas = fields.Integer(string='Cantidad de prácticas realizadas')
+    metodo_calculo_variable_id = fields.Many2one('hu_productividad.metodo_calculo_variable', string='Variable de método de cálculo')
+
+    #Datos de la variable de método de calculo que serán persistidos
     forma_calculo = fields.Selection([
         ('puntaje', 'Por puntaje'),
         ('porcentaje_facturado', 'Porcentaje facturado'),
@@ -92,10 +95,10 @@ class ProductividadEmpleado(models.Model):
     valor_monto_fijo = fields.Float(string='Valor monto fijo ($)')
 
 
-class ProductividadEmpleadoDetalle(models.Model):
-    _name = 'hu_productividad.productividad_empleado_detalle'
-    _description = 'Productividad - Productividad empleado detalle'
+class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
+    _name = 'hu_productividad.prod_empleado_det_turno_alephoo'
+    _description = 'Productividad - Productividad empleado detalle - Turno alephoo'
 
-    productividad_empleado_id = fields.Many2one('hu_productividad.productividad_empleado', string='Productividad empleado')
+    productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
     turno_alephoo_id = fields.Many2one('hu_productividad.hu_productividad.turno_alephoo', string='Turno Alephoo')
     incluido = fields.Boolean(string='Incluído', help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos')
