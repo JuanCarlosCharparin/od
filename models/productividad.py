@@ -8,12 +8,18 @@ from datetime import datetime
 class Productividad(models.Model):
     _name = 'hu_productividad.productividad'
     _description = 'Productividad'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Periodo')
     mes = fields.Integer(string='Mes')
     anio = fields.Integer(string='Año')
     importe_total = fields.Integer(string='Importe total calculado')
-    estado = fields.Selection(selection=[('pendiente', 'Pendiente'), ('cobrado', 'Cobrado')], string='Estado', default='pendiente')
+    estado = fields.Selection(selection=[
+        ('en_calculo', 'En proceso de cálculo'),
+        ('calculo_completo', 'Cálculo completo'),
+        ('a_pagar', 'A pagar'),
+        ('pagado', 'Pagado')
+    ], string='Estado', default='en_calculo', tracking=True)
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
     def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10):
@@ -23,6 +29,9 @@ class Productividad(models.Model):
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
         empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad(mes=mes, anio=anio, limite=limite_empleados)
+        if not empleados and productividad.estado == 'en_calculo':
+            productividad.estado = 'calculo_completo'
+            return
         importe_total_productividad = productividad.importe_total
         for empleado in empleados:
             calculos_productividad_empleado = empleado.calcular_productividad(mes, anio)
@@ -78,23 +87,25 @@ class Productividad(models.Model):
 class ProductividadEmpleado(models.Model):
     _name = 'hu_productividad.productividad_empleado'
     _description = 'Productividad - Productividad empleado'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
 
     productividad_id = fields.Many2one('hu_productividad.productividad', string='Productividad')
-    employee_id = fields.Many2one('hr.employee', string='Empleado')
-    importe = fields.Float(string='Importe')
+    employee_id = fields.Many2one('hr.employee', string='Empleado', tracking=True)
+    importe = fields.Float(string='Importe', tracking=True)
     productividad_empleado_detalle_ids = fields.One2many('hu_productividad.productividad_empleado_detalle', 'productividad_empleado_id')
 
 
 class ProductividadEmpleadoDetalle(models.Model):
     _name = 'hu_productividad.productividad_empleado_detalle'
     _description = 'Productividad - Productividad empleado detalle'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     productividad_empleado_id = fields.Many2one('hu_productividad.productividad_empleado', string='Productividad empleado')
-    importe = fields.Float(string='Importe')
-    cantidad_practicas_realizadas = fields.Integer(string='Cantidad de prácticas realizadas')
-    metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
-    metodo_calculo_variable_id = fields.Many2one('hu_productividad.metodo_calculo_variable', string='Variable de método de cálculo')
+    importe = fields.Float(string='Importe', tracking=True)
+    cantidad_practicas_realizadas = fields.Integer(string='Cantidad de prácticas realizadas', tracking=True)
+    metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo', tracking=True)
+    metodo_calculo_variable_id = fields.Many2one('hu_productividad.metodo_calculo_variable', string='Variable de método de cálculo', tracking=True)
     prod_empleado_det_turno_alephoo_ids = fields.One2many('hu_productividad.prod_empleado_det_turno_alephoo', 'productividad_emp_detalle_id')
 
     #Datos de la variable de método de calculo que serán persistidos
@@ -120,10 +131,11 @@ class ProductividadEmpleadoDetalle(models.Model):
 class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
     _name = 'hu_productividad.prod_empleado_det_turno_alephoo'
     _description = 'Productividad - Productividad empleado detalle - Turno alephoo'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
-    turno_alephoo_id = fields.Many2one('hu_productividad.turno_alephoo', string='Turno Alephoo')
-    incluido = fields.Boolean(string='Incluído', default=True, help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos')
+    turno_alephoo_id = fields.Many2one('hu_productividad.turno_alephoo', string='Turno Alephoo', tracking=True)
+    incluido = fields.Boolean(string='Incluído', default=True, help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos', tracking=True)
 
     #Campos relacionados de turno alephoo
     turno_alephoo_turno_id = fields.Integer(related='turno_alephoo_id.turno_id')
