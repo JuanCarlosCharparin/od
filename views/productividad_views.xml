@@ -7,11 +7,134 @@
         <field name="model">hu_productividad.productividad</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="create_date" readonly="1"/>
+                <field name="create_date" readonly="1" string="Fecha de creación"/>
                 <field name="name" readonly="1"/>
-                <field name="monto_total_calculado" readonly="1"/>
+                <field name="importe_total" readonly="1"/>
                 <field name="estado" readonly="1"/>
             </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario de Productividad -->
+    <record model="ir.ui.view" id="hu_productividad_productividad_form">
+        <field name="name">hu.productividad.productividad.form</field>
+        <field name="model">hu_productividad.productividad</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="estado" widget="statusbar" clickable="False"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="anio" readonly="1"/>
+                            <field name="mes" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="importe_total" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="page_calculo" string="Cálculo">
+                            <field name="productividad_empleado_ids" mode="tree,kanban">
+                                <tree>
+                                    <field name="employee_id" readonly="1"/>
+                                    <field name="importe" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de formulario de Productividad empleado-->
+    <record model="ir.ui.view" id="hu_productividad_productividad_empleado_form">
+        <field name="name">hu.productividad.productividad_empleado.form</field>
+        <field name="model">hu_productividad.productividad_empleado</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="employee_id" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="importe"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="page_detalle" string="Detalle">
+                            <field name="productividad_empleado_detalle_ids" widget="section_and_note_one2many" mode="tree,kanban">
+                                <tree>
+                                    <field name="metodo_calculo_id" readonly="1"/>
+                                    <field name="cantidad_practicas_realizadas" readonly="1"/>
+                                    <field name="forma_calculo" readonly="1"/>
+                                    <field name="base" readonly="1"/>
+                                    <field name="valor_punto" readonly="1"/>
+                                    <field name="tipo_punto_id" readonly="1"/>
+                                    <field name="porcentaje" readonly="1"/>
+                                    <field name="valor_monto_fijo" readonly="1"/>
+                                    <field name="importe" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de formulario de Productividad empleado detalle-->
+    <record model="ir.ui.view" id="hu_productividad_productividad_empleado_detalle_form">
+        <field name="name">hu.productividad.productividad_empleado_detalle.form</field>
+        <field name="model">hu_productividad.productividad_empleado_detalle</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="productividad_empleado_employee_id" readonly="1"/></h1>
+                        <h1><field name="metodo_calculo_id" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cantidad_practicas_realizadas" readonly="1"/>
+                            <field name="importe" readonly="1"/>
+                            <field name="met_calc_variable_prestacion_ids" widget="many2many_tags" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="forma_calculo" readonly="1"/>
+                            <field name="base" readonly="1"/>
+                            <field name="tipo_punto_id" readonly="1"/>
+                            <field name="valor_punto" readonly="1"/>
+                            <field name="porcentaje" readonly="1"/>
+                            <field name="valor_monto_fijo" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="page_turnos" string="Turnos">
+                            <field name="prod_empleado_det_turno_alephoo_ids" mode="tree,kanban">
+                                <tree>
+                                    <field name="turno_alephoo_turno_id" readonly="1"/>
+                                    <field name="turno_alephoo_fecha" readonly="1"/>
+                                    <field name="turno_alephoo_hora" widget="float_time" readonly="1"/>
+                                    <field name="turno_alephoo_paciente_nombre" readonly="1"/>
+                                    <field name="turno_alephoo_paciente_dni" readonly="1"/>
+                                    <field name="turno_alephoo_prestacion_codigo" readonly="1"/>
+                                    <field name="turno_alephoo_prestacion_cantidad" readonly="1"/>
+                                    <field name="incluido" readonly="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
         </field>
     </record>
 
