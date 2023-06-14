@@ -11,7 +11,7 @@ class Employee(models.Model):
     id_alephoo = fields.Integer(string='ID Alephoo')
     fecha_ultimo_calculo_productividad = fields.Datetime(string='Fecha de último cálculo de productividad')
     # metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
-    metodo_calculo_ids = fields.Many2one(
+    metodo_calculo_ids = fields.Many2many(
         comodel_name='hu_productividad.metodo_calculo',
         relation='hu_productividad_employee_metodo_calculo',
         colum1='employee_id',
@@ -66,8 +66,6 @@ class Employee(models.Model):
                 elif metodo_calculo_variable.forma_calculo == 'formula_vieja':
                     importe = ((len(turnos_alephoo) * metodo_calculo_variable.valor_punto) - metodo_calculo_variable.base) * metodo_calculo_variable.tipo_punto_id.valor
 
-
-
                 calculos_productividad.append({
                     'turno_alephoo_ids': turnos_alephoo.ids,
                     'importe': importe,
@@ -89,7 +87,7 @@ class Employee(models.Model):
         mes_actual = datetime.now().year
         anio_actual = datetime.now().month
         if mes == mes_actual and anio == anio_actual:
-            return self.get_empleados_a_calcular_productividad_mes_actual(limite)
+            return self._get_empleados_a_calcular_productividad_mes_actual(limite)
         else:
             return self._get_empleados_a_calcular_productividad_segun_mes(mes, anio, limite=False)
 
@@ -102,7 +100,7 @@ class Employee(models.Model):
         return self.search([
             ('metodo_calculo_ids', '!=', False),
             ('fecha_ultimo_calculo_productividad', '<=', primer_dia_mes_actual)
-        ], limite=limite)
+        ], limit=limite)
 
     def _get_empleados_a_calcular_productividad_segun_mes(self, mes, anio, limite):
         empleados_ya_calculados = []
@@ -113,4 +111,4 @@ class Employee(models.Model):
         return self.search([
             ('id', 'not in', empleados_ya_calculados),
             ('metodo_calculo_ids', '!=', False)
-        ], limite=limite)
+        ], limit=limite)

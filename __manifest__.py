@@ -29,6 +29,8 @@
         'views/configuracion_views.xml',
         'views/hr_employee.xml',
 
+        'data/crons.xml',
+
         # Menu
         'views/menu.xml'
     ],

@@ -17,36 +17,43 @@ class Productividad(models.Model):
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
     #@TODO esto debe ser una accion planificada
-    def generar_productividad_mensual(self, mes, anio, limite_empleados):
-        if not mes or anio:
-            mes = datetime.now().year
-            anio = datetime.now().month
+    def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10):
+        if not (mes or anio):
+            anio = datetime.now().year
+            mes = datetime.now().month
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
-        empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad_mes_actual(limite=limite_empleados)
+        empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad(mes=mes, anio=anio, limite=limite_empleados)
         for empleado in empleados:
             calculos_productividad_empleado = empleado.calcular_productividad(mes, anio)
             productividad_empleado = self.env['hu_productividad.productividad_empleado'].create({
                 'productividad_id': productividad.id,
-                'employee_id': empleado.id,
-                'metodo_calculo_id': calculo_pe.metodo_calculo_id
+                'employee_id': empleado.id
             })
             importe_total = 0
             for calculo_pe in calculos_productividad_empleado:
-                self.env['hu_productividad.productividad_empleado_detalle'].create({
+                productividad_empleado_detalle =self.env['hu_productividad.productividad_empleado_detalle'].create({
                     'productividad_empleado_id': productividad_empleado.id,
-                    'importe': calculo_pe.importe,
-                    'cantidad_practicas_realizadas': calculo_pe.cantidad_practicas_realizadas,
-                    'metodo_calculo_variable_id': calculo_pe.metodo_calculo_variable_id,
-                    'forma_calculo': calculo_pe.forma_calculo,
-                    'base': calculo_pe.base,
-                    'tipo_punto_id': calculo_pe.tipo_punto_id,
-                    'valor_punto': calculo_pe.valor_punto,
-                    'porcentaje': calculo_pe.porcentaje,
-                    'valor_monto_fijo': calculo_pe.valor_monto_fijo
+                    'importe': calculo_pe.get('importe'),
+                    'cantidad_practicas_realizadas': calculo_pe.get('cantidad_practicas_realizadas'),
+                    'metodo_calculo_id': calculo_pe.get('metodo_calculo_id'),
+                    'metodo_calculo_variable_id': calculo_pe.get('metodo_calculo_variable_id'),
+                    'forma_calculo': calculo_pe.get('forma_calculo'),
+                    'base': calculo_pe.get('base'),
+                    'tipo_punto_id': calculo_pe.get('tipo_punto_id'),
+                    'valor_punto': calculo_pe.get('valor_punto'),
+                    'porcentaje': calculo_pe.get('porcentaje'),
+                    'valor_monto_fijo': calculo_pe.get('valor_monto_fijo')
                 })
-                importe_total += calculo_pe.importe
-                # @TODO PROBAR y completar creacion de prod_empleado_det_turno_alephoo
+                importe_total += calculo_pe.get('importe')
+
+                #Crea los registros de prod_empleado_det_turno_alephoo (relación entre productividad_empleado_detalle y el turno)
+                for turno_alephoo_id in calculo_pe.get('turno_alephoo_ids'):
+                    self.env['hu_productividad.prod_empleado_det_turno_alephoo'].create({
+                        'turno_alephoo_id': turno_alephoo_id,
+                        'productividad_emp_detalle_id': productividad_empleado_detalle.id,
+                        'incluido': True
+                    })
 
             productividad_empleado.importe = importe_total
 
@@ -72,7 +79,6 @@ class ProductividadEmpleado(models.Model):
 
     productividad_id = fields.Many2one('hu_productividad.productividad', string='Productividad')
     employee_id = fields.Many2one('hr.employee', string='Empleado')
-    metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
     importe = fields.Float(string='Importe')
     productividad_empleado_detalle_ids = fields.One2many('hu_productividad.productividad_empleado_detalle', 'productividad_empleado_id')
 
@@ -84,7 +90,9 @@ class ProductividadEmpleadoDetalle(models.Model):
     productividad_empleado_id = fields.Many2one('hu_productividad.productividad_empleado', string='Productividad empleado')
     importe = fields.Float(string='Importe')
     cantidad_practicas_realizadas = fields.Integer(string='Cantidad de prácticas realizadas')
+    metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
     metodo_calculo_variable_id = fields.Many2one('hu_productividad.metodo_calculo_variable', string='Variable de método de cálculo')
+    prod_empleado_det_turno_alephoo_ids = fields.One2many('hu_productividad.prod_empleado_det_turno_alephoo', 'productividad_emp_detalle_id')
 
     #Datos de la variable de método de calculo que serán persistidos
     forma_calculo = fields.Selection([
@@ -101,10 +109,11 @@ class ProductividadEmpleadoDetalle(models.Model):
     valor_monto_fijo = fields.Float(string='Valor monto fijo ($)')
 
 
+#Almacena la relación entre productividad_empleado_detalle y el turno alephoo
 class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
     _name = 'hu_productividad.prod_empleado_det_turno_alephoo'
     _description = 'Productividad - Productividad empleado detalle - Turno alephoo'
 
     productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
     turno_alephoo_id = fields.Many2one('hu_productividad.hu_productividad.turno_alephoo', string='Turno Alephoo')
-    incluido = fields.Boolean(string='Incluído', help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos')
+    incluido = fields.Boolean(string='Incluído', default=True, help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos')
