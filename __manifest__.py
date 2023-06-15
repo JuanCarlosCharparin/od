@@ -16,22 +16,21 @@
 
     # always loaded
     'data': [
-        # Data
-        'data/ir.module.category.csv',
-
-        # Security
-        'security/res.groups.xml',
-        'security/ir.model.access.csv',
-
         # Views
         'views/productividad_views.xml',
         'views/metodo_calculo_views.xml',
         'views/configuracion_views.xml',
         'views/hr_employee.xml',
 
+        # Menu
+        'views/menu.xml',
+
+        # Data
+        'data/ir.module.category.csv',
         'data/crons.xml',
 
-        # Menu
-        'views/menu.xml'
+        # Security
+        'security/res.groups.xml',
+        'security/ir.model.access.csv',
     ],
 }
