@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from datetime import datetime
 
 
@@ -22,12 +22,16 @@ class Productividad(models.Model):
     ], string='Estado', default='en_calculo', tracking=True)
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
-    #@TODO validar que esto funcione solo a partir del día 10 si el calculo es el mes actual ya que la facturación
-    #se hace del 1 al 10
     def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10):
-        if not (mes or anio):
-            anio = datetime.now().year
-            mes = datetime.now().month
+        dia_actual = datetime.now().day
+        mes_actual = datetime.now().month
+        anio_actual = datetime.now().year
+        if not mes or not anio:
+            mes = mes_actual
+            anio = anio_actual
+
+        if mes == mes_actual and anio == anio_actual and dia_actual <= 17:
+            raise ValidationError('No es posible crear la productividad del mes actual ya que aún no termina el período de facturación de turnos. Se generará a partir del día 10.')
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
         empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad(mes=mes, anio=anio, limite=limite_empleados)
@@ -150,4 +154,12 @@ class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
     turno_alephoo_prestacion_nombre = fields.Char(related='turno_alephoo_id.prestacion_nombre')
     turno_alephoo_prestacion_codigo = fields.Char(related='turno_alephoo_id.prestacion_codigo')
     turno_alephoo_prestacion_cantidad = fields.Integer(related='turno_alephoo_id.prestacion_cantidad')
+
+    def incluir_item(self):
+        #Marcar turno_alephoo como computado_en_productividad False
+        #Recalcular la productividad de productividad_empleado_detalle
+        return
+
+    def excluir_item(self):
+        return
 

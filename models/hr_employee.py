@@ -2,7 +2,8 @@
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 class Employee(models.Model):
@@ -20,12 +21,10 @@ class Employee(models.Model):
     )
 
     def calcular_productividad(self, mes, anio):
-        #@TODO valores hardcodeados
-        turno_fecha_desde = '2023-02-01'
-        turno_fecha_hasta = '2023-02-28'
-        anio_facturacion = 2023
-        mes_facturacion = 3
-        self.env['hu_productividad.turno_alephoo'].sincronizar_datos_alephoo(anio_facturacion, mes_facturacion, turno_fecha_desde, turno_fecha_hasta, self.id_alephoo)
+        primer_dia_mes_actual = datetime.now().replace(day=1)
+        primer_dia_mes_pasado = primer_dia_mes_actual - relativedelta(months=1)
+        ultimo_dia_mes_pasado = primer_dia_mes_actual - timedelta(days=1)
+        self.env['hu_productividad.turno_alephoo'].sincronizar_datos_alephoo(anio, mes, primer_dia_mes_pasado, ultimo_dia_mes_pasado, self.id_alephoo)
         calculos_productividad = []
         for metodo_calculo in self.metodo_calculo_ids:
             if metodo_calculo.active:

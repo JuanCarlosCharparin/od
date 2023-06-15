@@ -338,7 +338,7 @@ ORDER BY
                     'paciente_fecha_nacimiento': result[4],
                     'paciente_edad': result[5],
                     'fecha': result[8],
-                    'hora': result[9].total_seconds(),
+                    'hora': result[9].total_seconds(), #@TODO corregir porque se muestra mal
                     'paciente_numero_hc': result[10],
                     'medico_nombre': result[13],
                     'medico_id': result[14],
