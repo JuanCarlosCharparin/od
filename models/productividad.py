@@ -22,6 +22,8 @@ class Productividad(models.Model):
     ], string='Estado', default='en_calculo', tracking=True)
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
+    #@TODO validar que esto funcione solo a partir del día 10 si el calculo es el mes actual ya que la facturación
+    #se hace del 1 al 10
     def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10):
         if not (mes or anio):
             anio = datetime.now().year
@@ -135,6 +137,7 @@ class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
 
     productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
     turno_alephoo_id = fields.Many2one('hu_productividad.turno_alephoo', string='Turno Alephoo', tracking=True)
+    #@TODO permitir incluir o no incluir el ítem
     incluido = fields.Boolean(string='Incluído', default=True, help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos', tracking=True)
 
     #Campos relacionados de turno alephoo

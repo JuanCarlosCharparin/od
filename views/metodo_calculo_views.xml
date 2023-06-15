@@ -1,6 +1,19 @@
 <?xml version="1.0"?>
 <odoo>
 
+    <!-- Vista de Lista Método de Cálculo -->
+    <record model="ir.ui.view" id="hu_productividad_metodo_calculo_tree">
+        <field name="name">hu.productividad.metodo_calculo.tree</field>
+        <field name="model">hu_productividad.metodo_calculo</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="tipo"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
     <!-- Vista de formulario de Método de Cálculo -->
     <record model="ir.ui.view" id="hu_productividad_metodo_calculo_form">
         <field name="name">hu.productividad.metodo.calculo.form</field>
@@ -14,6 +27,7 @@
                     <group>
                         <group>
                             <field name="tipo"/>
+                            <field name="active"/>
                         </group>
                         <group></group>
                     </group>

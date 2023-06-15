@@ -1,5 +1,54 @@
 <?xml version="1.0"?>
 <odoo>
+
+    <!-- Vista de Lista Prestacion -->
+    <record model="ir.ui.view" id="hu_productividad_prestacion_tree">
+        <field name="name">hu.productividad.prestacion.tree</field>
+        <field name="model">hu_productividad.prestacion</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="codigo"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario de Prestacion -->
+    <record model="ir.ui.view" id="hu_productividad_prestacion_form">
+        <field name="name">hu.productividad.prestacion.form</field>
+        <field name="model">hu_productividad.prestacion</field>
+        <field name="arch" type="xml">
+            <form string="Prestación">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="codigo"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista de Lista Tipos de Puntos -->
+    <record model="ir.ui.view" id="hu_productividad_tipo_punto_tree">
+        <field name="name">hu.productividad.tipo_punto.tree</field>
+        <field name="model">hu_productividad.tipo_punto</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="valor"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
     <!-- Vista de formulario de Tipos de Puntos -->
     <record model="ir.ui.view" id="hu_productividad_tipo_punto_form">
         <field name="name">hu.productividad.tipo.punto.form</field>
