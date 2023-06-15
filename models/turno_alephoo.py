@@ -298,6 +298,7 @@ WHERE
     OR pl.id = 37 
     OR pl.id = 63 
     OR pl.id = 66
+    OR pl.id = 150
   ) 
   AND (cc.id = 11) 
   AND IF(
