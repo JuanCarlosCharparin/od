@@ -30,7 +30,7 @@ class Productividad(models.Model):
             mes = mes_actual
             anio = anio_actual
 
-        if mes == mes_actual and anio == anio_actual and dia_actual <= 17:
+        if mes == mes_actual and anio == anio_actual and dia_actual <= 10:
             raise ValidationError('No es posible crear la productividad del mes actual ya que aún no termina el período de facturación de turnos. Se generará a partir del día 10.')
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
