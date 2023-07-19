@@ -77,7 +77,7 @@
 
 
         <!-- Menu principal -->
-        <menuitem id="hu_productividad_menu" name="Productividad" sequence="2" action="hu_productividad_action"/>
+        <menuitem id="hu_productividad_menu" name="Productividad" sequence="2" action="hu_productividad_action" web_icon="hu_productividad,static/description/icono_productividad.png"/>
 
         <!-- Productividad  -->
         <menuitem id="submenu_hu_productividad_productividad" name="Productividad" parent="hu_productividad_menu" sequence="1" action="hu_productividad_action"/>
