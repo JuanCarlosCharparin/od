@@ -33,6 +33,11 @@ class Employee(models.Model):
                     codigo_prestaciones = []
                     for prestacion in metodo_calculo_variable.prestacion_ids:
                         codigo_prestaciones.append(prestacion.codigo)
+                    #Toma también las prestaciones de los agrupadores
+                    for agrupador_prestacion in metodo_calculo_variable.agrupador_prestaciones_ids:
+                        for prestacion in agrupador_prestacion.prestacion_ids:
+                            codigo_prestaciones.append(prestacion.codigo)
+
                     turnos_alephoo = self.env['hu_productividad.turno_alephoo'].search([
                         ('employee_id', '=', self.id),
                         ('computado_en_productividad', '=', False),

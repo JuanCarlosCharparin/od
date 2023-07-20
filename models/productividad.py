@@ -129,7 +129,10 @@ class ProductividadEmpleadoDetalle(models.Model):
     valor_monto_fijo = fields.Float(string='Valor monto fijo ($)')
 
     #Campos relacionados
+    #@TODO Los campos relaciones met_calc_variable_prestacion_ids y met_calc_variable_agrup_prestaciones_ids deberían ser almacenados xq si se cambia en el método de calculo,
+    #@TODO también se cambia acá
     met_calc_variable_prestacion_ids = fields.Many2many('hu_productividad.prestacion', related='metodo_calculo_variable_id.prestacion_ids', string='Prestaciones incluídas')
+    met_calc_variable_agrup_prestaciones_ids = fields.Many2many('hu_productividad.agrupador_prestaciones', related='metodo_calculo_variable_id.agrupador_prestaciones_ids', string='Agrupadores de prestaciones incluídos')
     productividad_empleado_employee_id = fields.Many2one('hr.employee', related='productividad_empleado_id.employee_id')
 
 

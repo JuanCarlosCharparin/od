@@ -12,6 +12,7 @@ class ProductividadPrestacion(models.Model):
     name = fields.Char(string='Nombre', required=True, tracking=True)
     codigo = fields.Char(string='Código', required=True, tracking=True)
     active = fields.Boolean(string='Activo', default=True, tracking=True)
+    agrupador_prestaciones_id = fields.Many2one('hu_productividad.agrupador_prestaciones', string='Agrupador')
 
     def name_get(self):
         res = []
@@ -29,6 +30,16 @@ class ProductividadPrestacion(models.Model):
         else:
             domain = ['|', ('name', 'ilike', name), ('codigo', 'ilike', name)]
         return self._search(expression.AND([domain, args]), limit=limit, access_rights_uid=name_get_uid)
+
+
+class ProductividadAgrupadorPrestaciones(models.Model):
+    _name = 'hu_productividad.agrupador_prestaciones'
+    _description = 'Productividad - Agrupador de prestaciones'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    name = fields.Char(string='Nombre', required=True, tracking=True)
+    active = fields.Boolean(string='Activo', default=True, tracking=True)
+    prestacion_ids = fields.One2many('hu_productividad.prestacion', 'agrupador_prestaciones_id')
 
 
 class ProductividadTipoPunto(models.Model):

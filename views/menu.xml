@@ -32,6 +32,20 @@
             </field>
         </record>
 
+        <record id="action_hu_productividad_agrupador_prestaciones" model="ir.actions.act_window">
+            <field name="name">Agrupador de prestaciones</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hu_productividad.agrupador_prestaciones</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crea un agrupador de prestaciones
+              </p><p>
+                ...
+              </p>
+            </field>
+        </record>
+
         <record id="action_hu_productividad_prestacion" model="ir.actions.act_window">
             <field name="name">Prestaciones</field>
             <field name="type">ir.actions.act_window</field>
@@ -87,9 +101,10 @@
 
         <!-- Submenú Configuración -->
         <menuitem id="submenu_hu_productividad_configuracion" name="Configuración" parent="hu_productividad_menu" sequence="3"/>
-        <menuitem id="submenu_hu_productividad_prestacion" name="Prestaciones" parent="submenu_hu_productividad_configuracion" sequence="1" action="action_hu_productividad_prestacion"/>
-        <menuitem id="submenu_hu_productividad_metodo_calculo" name="Métodos de Cálculo" parent="submenu_hu_productividad_configuracion" sequence="2" action="action_hu_productividad_metodo_calculo"/>
-        <menuitem id="submenu_hu_productividad_tipo_punto" name="Tipos de Puntos" parent="submenu_hu_productividad_configuracion" sequence="3" action="action_hu_productividad_tipo_punto"/>
+        <menuitem id="submenu_hu_productividad_metodo_calculo" name="Métodos de Cálculo" parent="submenu_hu_productividad_configuracion" sequence="1" action="action_hu_productividad_metodo_calculo"/>
+        <menuitem id="submenu_hu_productividad_agrupador_prestaciones" name="Agrupador de prestaciones" parent="submenu_hu_productividad_configuracion" sequence="2" action="action_hu_productividad_agrupador_prestaciones"/>
+        <menuitem id="submenu_hu_productividad_prestacion" name="Prestaciones" parent="submenu_hu_productividad_configuracion" sequence="3" action="action_hu_productividad_prestacion"/>
+        <menuitem id="submenu_hu_productividad_tipo_punto" name="Tipos de Puntos" parent="submenu_hu_productividad_configuracion" sequence="4" action="action_hu_productividad_tipo_punto"/>
 
 
     </data>

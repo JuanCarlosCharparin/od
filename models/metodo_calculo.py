@@ -24,6 +24,13 @@ class ProductividadMetodoCalculoVariable(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
+    agrupador_prestaciones_ids = fields.Many2many(
+        'hu_productividad.agrupador_prestaciones',
+        relation='hu_prod_metodo_calculo_var_agrup_prestaciones',
+        column1='metodo_calculo_variable_id',
+        column2='agrupador_prestaciones_id',
+        string='Agrupadores de prestaciones'
+    )
     prestacion_ids = fields.Many2many(
         'hu_productividad.prestacion',
         relation='hu_prod_metodo_calculo_var_prestacion',

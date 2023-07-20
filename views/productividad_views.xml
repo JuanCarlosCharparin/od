@@ -116,6 +116,7 @@
                         <group>
                             <field name="cantidad_practicas_realizadas" readonly="1"/>
                             <field name="importe" readonly="1"/>
+                            <field name="met_calc_variable_agrup_prestaciones_ids" widget="many2many_tags" readonly="1"/>
                             <field name="met_calc_variable_prestacion_ids" widget="many2many_tags" readonly="1"/>
                         </group>
                         <group>

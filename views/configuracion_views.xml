@@ -1,6 +1,49 @@
 <?xml version="1.0"?>
 <odoo>
 
+    <!-- Vista de Lista Agrupador de prestaciones -->
+    <record model="ir.ui.view" id="hu_productividad_agrupador_prestaciones_tree">
+        <field name="name">hu.productividad.agrupador_prestaciones.tree</field>
+        <field name="model">hu_productividad.agrupador_prestaciones</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario de Agrupador de prestaciones -->
+    <record model="ir.ui.view" id="hu_productividad_agrupador_prestaciones_form">
+        <field name="name">hu.productividad.agrupador_prestaciones.form</field>
+        <field name="model">hu_productividad.agrupador_prestaciones</field>
+        <field name="arch" type="xml">
+            <form string="Agrupador de prestaciones">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="active"/>
+                    </group>
+                    <notebook>
+                        <page name="page_prestaciones" string="Prestaciones">
+                            <field name="prestacion_ids">
+                                <tree create="0" edit="0" delete="0">
+                                    <field name="name"/>
+                                    <field name="codigo"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
     <!-- Vista de Lista Prestacion -->
     <record model="ir.ui.view" id="hu_productividad_prestacion_tree">
         <field name="name">hu.productividad.prestacion.tree</field>
@@ -9,6 +52,7 @@
             <tree>
                 <field name="name"/>
                 <field name="codigo"/>
+                <field name="agrupador_prestaciones_id"/>
                 <field name="active"/>
             </tree>
         </field>
@@ -24,6 +68,7 @@
                     <group>
                         <field name="name"/>
                         <field name="codigo"/>
+                        <field name="agrupador_prestaciones_id"/>
                         <field name="active"/>
                     </group>
                 </sheet>

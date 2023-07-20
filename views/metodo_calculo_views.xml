@@ -35,6 +35,7 @@
                         <page name="page_variables" string="Variables de cálculo">
                             <field name="metodo_calculo_variable_ids" widget="section_and_note_one2many" mode="tree,kanban">
                                 <tree editable="bottom">
+                                    <field name="agrupador_prestaciones_ids" widget="many2many_tags"/>
                                     <field name="prestacion_ids" widget="many2many_tags"/>
                                     <field name="forma_calculo"/>
                                     <field name="base" attrs="{'readonly': [('forma_calculo', 'not in', ['puntaje', 'formula_vieja'])]}"/>
