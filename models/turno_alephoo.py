@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 import mysql.connector
 
 
@@ -315,12 +315,21 @@ ORDER BY
   PACIENTE ASC;
         """.format(anio=anio_facturacion, mes=mes_facturacion, medico_id=medico_id, fecha_desde=turno_fecha_desde, fecha_hasta=turno_fecha_hasta)
 
+        host = self.env["ir.config_parameter"].get_param("hu.turnos_alephoo_host", False)
+        port = self.env["ir.config_parameter"].get_param("hu.turnos_alephoo_port", False)
+        user = self.env["ir.config_parameter"].get_param("hu.turnos_alephoo_user", False)
+        password = self.env["ir.config_parameter"].get_param("hu.turnos_alephoo_password", False)
+        database = self.env["ir.config_parameter"].get_param("hu.turnos_alephoo_database", False)
+
+        if not all([host, port, user, password, database]):
+            raise ValidationError('Los datos de conexión a la base de datos no están configurados.')
+
         conn = mysql.connector.connect(
-            host="179.0.135.200",
-            port=43306,
-            user="root",
-            password="sisnuevo.13",
-            database="salutte2",
+            host=host,
+            port=port,
+            user=user,
+            password=password,
+            database=database,
         )
         cursor = conn.cursor()
         cursor.execute(query)
