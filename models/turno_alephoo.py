@@ -303,7 +303,7 @@ WHERE
   AND (cc.id = 11) 
   AND IF(
     ISNULL(con.evento_id), 
-    pr.id = 5, 
+    pr.id = {medico_id}, 
     con.personal_id = {medico_id}
   ) 
   AND bo.estado = 7 
