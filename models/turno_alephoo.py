@@ -335,7 +335,10 @@ ORDER BY
         cursor.execute(query)
         results = cursor.fetchall()
         for result in results:
-            turno_existente = self.search([('turno_id', '=', result[0])])
+            turno_existente = self.search([
+                ('turno_id', '=', result[0]),
+                ('prestacion_codigo', '=', result[21]),
+            ])
             if not turno_existente:
                 empleado_id = self.env['hr.employee'].search([('id_alephoo', '=', result[14])], limit=1).id or None
                 self.create({
