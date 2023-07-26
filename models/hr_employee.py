@@ -21,10 +21,10 @@ class Employee(models.Model):
     )
 
     def calcular_productividad(self, mes, anio):
-        primer_dia_mes_actual = datetime.now().replace(day=1)
-        primer_dia_mes_pasado = primer_dia_mes_actual - relativedelta(months=1)
-        ultimo_dia_mes_pasado = primer_dia_mes_actual - timedelta(days=1)
-        self.env['hu_productividad.turno_alephoo'].sincronizar_datos_alephoo(anio, mes, primer_dia_mes_pasado, ultimo_dia_mes_pasado, self.id_alephoo)
+        primer_dia_mes_actual = datetime(anio, mes, 1)
+        primer_dia_mes_anterior = primer_dia_mes_actual - relativedelta(months=1)
+        ultimo_dia_mes_anterior = (primer_dia_mes_actual - timedelta(days=1)).replace(hour=23, minute=59)
+        self.env['hu_productividad.turno_alephoo'].sincronizar_datos_alephoo(anio, mes, primer_dia_mes_anterior, ultimo_dia_mes_anterior, self.id_alephoo)
         calculos_productividad = []
         for metodo_calculo in self.metodo_calculo_ids:
             if metodo_calculo.active:

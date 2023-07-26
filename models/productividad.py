@@ -22,6 +22,7 @@ class Productividad(models.Model):
     ], string='Estado', default='en_calculo', tracking=True)
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
+    #Acción planificada
     def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10):
         dia_actual = datetime.now().day
         mes_actual = datetime.now().month
