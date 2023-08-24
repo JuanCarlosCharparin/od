@@ -2,6 +2,7 @@
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from datetime import datetime
 import mysql.connector
 
 
@@ -13,6 +14,18 @@ class Productividad(models.Model):
     turno_id = fields.Integer(string='Turno ID')
     mes = fields.Char(string='Mes')
     fecha = fields.Date(string='Fecha')
+    dia = fields.Selection(
+        string='Día',
+        selection=[
+            ('0', 'Lunes'),
+            ('1', 'Martes'),
+            ('2', 'Miércoles'),
+            ('3', 'Jueves'),
+            ('4', 'Viernes'),
+            ('5', 'Sábado'),
+            ('6', 'Domingo')
+        ]
+    )
     hora = fields.Float(string='Hora')
     estado = fields.Char(string='Estado')
 
@@ -350,7 +363,8 @@ ORDER BY
                     'paciente_fecha_nacimiento': result[4],
                     'paciente_edad': result[5],
                     'fecha': result[8],
-                    'hora': result[9].total_seconds(), #@TODO corregir porque se muestra mal
+                    'dia': str(result[8].weekday()),
+                    'hora': result[9].total_seconds() / 3600,
                     'paciente_numero_hc': result[10],
                     'medico_nombre': result[13],
                     'medico_id': result[14],
@@ -363,4 +377,3 @@ ORDER BY
                     'importe_total': result[25],
                     'factura_nro': result[30]
                 })
-

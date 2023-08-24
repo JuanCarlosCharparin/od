@@ -12,13 +12,14 @@ class Employee(models.Model):
     id_alephoo = fields.Integer(string='ID Alephoo')
     fecha_ultimo_calculo_productividad = fields.Datetime(string='Fecha de último cálculo de productividad')
     # metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
-    metodo_calculo_ids = fields.Many2many(
-        comodel_name='hu_productividad.metodo_calculo',
-        relation='hu_productividad_employee_metodo_calculo',
-        colum1='employee_id',
-        colum2='metodo_calculo_id',
-        string='Métodos de cálculo'
-    )
+    # metodo_calculo_ids = fields.Many2many(
+    #     comodel_name='hu_productividad.metodo_calculo',
+    #     relation='hu_productividad_employee_metodo_calculo',
+    #     colum1='employee_id',
+    #     colum2='metodo_calculo_id',
+    #     string='Métodos de cálculo'
+    # )
+    metodo_calculo_employee_ids = fields.One2many('hu_productividad.metodo_calculo_employee', 'employee_id', string='Métodos de cálculo')
 
     def calcular_productividad(self, mes, anio):
         primer_dia_mes_actual = datetime(anio, mes, 1)
@@ -26,9 +27,9 @@ class Employee(models.Model):
         ultimo_dia_mes_anterior = (primer_dia_mes_actual - timedelta(days=1)).replace(hour=23, minute=59)
         self.env['hu_productividad.turno_alephoo'].sincronizar_datos_alephoo(anio, mes, primer_dia_mes_anterior, ultimo_dia_mes_anterior, self.id_alephoo)
         calculos_productividad = []
-        for metodo_calculo in self.metodo_calculo_ids:
-            if metodo_calculo.active:
-                for metodo_calculo_variable in metodo_calculo.metodo_calculo_variable_ids:
+        for metodo_calculo_employee in self.metodo_calculo_employee_ids:
+            if metodo_calculo_employee.metodo_calculo_id.active:
+                for metodo_calculo_variable in metodo_calculo_employee.metodo_calculo_id.metodo_calculo_variable_ids:
                     #Por cada variable, buscar los turnos que tenga el médico con esas practicas
                     codigo_prestaciones = []
                     for prestacion in metodo_calculo_variable.prestacion_ids:
@@ -38,11 +39,19 @@ class Employee(models.Model):
                         for prestacion in agrupador_prestacion.prestacion_ids:
                             codigo_prestaciones.append(prestacion.codigo)
 
-                    turnos_alephoo = self.env['hu_productividad.turno_alephoo'].search([
+                    filtros_turnos = [
                         ('employee_id', '=', self.id),
                         ('computado_en_productividad', '=', False),
                         ('prestacion_codigo', 'in', codigo_prestaciones)
-                    ])
+                    ]
+
+                    #En caso de corresponder agrega los filtros por día y horario
+                    if metodo_calculo_employee.horario_especifico:
+                        filtros_turnos.append(('dia', '=', metodo_calculo_employee.dia))
+                        filtros_turnos.append(('hora', '>=', metodo_calculo_employee.hora_desde))
+                        filtros_turnos.append(('hora', '<=', metodo_calculo_employee.hora_hasta))
+
+                    turnos_alephoo = self.env['hu_productividad.turno_alephoo'].search(filtros_turnos)
 
                     importe = 0
                     if turnos_alephoo:
@@ -76,7 +85,8 @@ class Employee(models.Model):
                         'turno_alephoo_ids': turnos_alephoo.ids,
                         'importe': importe,
                         'cantidad_practicas_realizadas': len(turnos_alephoo),
-                        'metodo_calculo_id': metodo_calculo.id,
+                        'metodo_calculo_id': metodo_calculo_employee.metodo_calculo_id.id,
+                        'horario': metodo_calculo_employee.get_nombre_horario(),
                         'metodo_calculo_variable_id': metodo_calculo_variable.id,
                         'forma_calculo': metodo_calculo_variable.forma_calculo,
                         'base': metodo_calculo_variable.base,
@@ -104,7 +114,7 @@ class Employee(models.Model):
         primer_dia_mes_actual = primer_dia_mes_actual.replace(hour=0, minute=0, second=0, microsecond=0)
 
         return self.search([
-            ('metodo_calculo_ids', '!=', False),
+            ('metodo_calculo_employee_ids', '!=', False),
             ('fecha_ultimo_calculo_productividad', '<=', primer_dia_mes_actual)
         ], limit=limite)
 
@@ -116,5 +126,5 @@ class Employee(models.Model):
 
         return self.search([
             ('id', 'not in', empleados_ya_calculados),
-            ('metodo_calculo_ids', '!=', False)
+            ('metodo_calculo_employee_ids', '!=', False)
         ], limit=limite)

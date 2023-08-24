@@ -79,6 +79,7 @@
                             <field name="productividad_empleado_detalle_ids" widget="section_and_note_one2many" mode="tree,kanban">
                                 <tree>
                                     <field name="metodo_calculo_id" readonly="1"/>
+                                    <field name="horario" readonly="1"/>
                                     <field name="cantidad_practicas_realizadas" readonly="1"/>
                                     <field name="forma_calculo" readonly="1"/>
                                     <field name="base" readonly="1"/>

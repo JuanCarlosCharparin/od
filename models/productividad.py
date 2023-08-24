@@ -53,6 +53,7 @@ class Productividad(models.Model):
                     'importe': calculo_pe.get('importe'),
                     'cantidad_practicas_realizadas': calculo_pe.get('cantidad_practicas_realizadas'),
                     'metodo_calculo_id': calculo_pe.get('metodo_calculo_id'),
+                    'horario': calculo_pe.get('horario'),
                     'metodo_calculo_variable_id': calculo_pe.get('metodo_calculo_variable_id'),
                     'forma_calculo': calculo_pe.get('forma_calculo'),
                     'base': calculo_pe.get('base'),
@@ -112,6 +113,7 @@ class ProductividadEmpleadoDetalle(models.Model):
     importe = fields.Float(string='Importe', tracking=True)
     cantidad_practicas_realizadas = fields.Integer(string='Cantidad de prácticas realizadas', tracking=True)
     metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo', tracking=True)
+    horario = fields.Char(string='Horario', tracking=True)
     metodo_calculo_variable_id = fields.Many2one('hu_productividad.metodo_calculo_variable', string='Variable de método de cálculo', tracking=True)
     prod_empleado_det_turno_alephoo_ids = fields.One2many('hu_productividad.prod_empleado_det_turno_alephoo', 'productividad_emp_detalle_id')
 
