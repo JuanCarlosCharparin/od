@@ -11,14 +11,6 @@ class Employee(models.Model):
 
     id_alephoo = fields.Integer(string='ID Alephoo')
     fecha_ultimo_calculo_productividad = fields.Datetime(string='Fecha de último cálculo de productividad')
-    # metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo')
-    # metodo_calculo_ids = fields.Many2many(
-    #     comodel_name='hu_productividad.metodo_calculo',
-    #     relation='hu_productividad_employee_metodo_calculo',
-    #     colum1='employee_id',
-    #     colum2='metodo_calculo_id',
-    #     string='Métodos de cálculo'
-    # )
     metodo_calculo_employee_ids = fields.One2many('hu_productividad.metodo_calculo_employee', 'employee_id', string='Métodos de cálculo')
 
     def calcular_productividad(self, mes, anio):
@@ -30,20 +22,29 @@ class Employee(models.Model):
         for metodo_calculo_employee in self.metodo_calculo_employee_ids:
             if metodo_calculo_employee.metodo_calculo_id.active:
                 for metodo_calculo_variable in metodo_calculo_employee.metodo_calculo_id.metodo_calculo_variable_ids:
-                    #Por cada variable, buscar los turnos que tenga el médico con esas practicas
+                    #Por cada variable, buscar los turnos que tenga el médico con esas practicas. Además, en caso de que en la prestación, el campo es_receta esté en True,
+                    #se debe buscar por especialidad 'RECETAS MEDICAS' ya que el turno puede venir con otro código de prestación pero la especialidad indica que es receta
                     codigo_prestaciones = []
+                    buscar_por_especialidad_recetas_medicas = False
                     for prestacion in metodo_calculo_variable.prestacion_ids:
                         codigo_prestaciones.append(prestacion.codigo)
+                        if prestacion.es_receta:
+                            buscar_por_especialidad_recetas_medicas = True
                     #Toma también las prestaciones de los agrupadores
                     for agrupador_prestacion in metodo_calculo_variable.agrupador_prestaciones_ids:
                         for prestacion in agrupador_prestacion.prestacion_ids:
                             codigo_prestaciones.append(prestacion.codigo)
+                            if prestacion.es_receta:
+                                buscar_por_especialidad_recetas_medicas = True
 
                     filtros_turnos = [
                         ('employee_id', '=', self.id),
                         ('computado_en_productividad', '=', False),
                         ('prestacion_codigo', 'in', codigo_prestaciones)
                     ]
+
+                    if buscar_por_especialidad_recetas_medicas:
+                        filtros_turnos.append(('espcialidad', '=', 'RECETAS MEDICAS'))
 
                     #En caso de corresponder agrega los filtros por día y horario
                     if metodo_calculo_employee.horario_especifico:

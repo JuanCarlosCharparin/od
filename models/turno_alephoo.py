@@ -28,6 +28,7 @@ class Productividad(models.Model):
     )
     hora = fields.Float(string='Hora')
     estado = fields.Char(string='Estado')
+    especialidad = fields.Char(string='Especialidad')
 
     paciente_nombre = fields.Char(string='Nombre paciente')
     paciente_dni = fields.Char(string='DNI')
@@ -365,6 +366,7 @@ ORDER BY
                     'fecha': result[8],
                     'dia': str(result[8].weekday()),
                     'hora': result[9].total_seconds() / 3600,
+                    'especialidad': result[7],
                     'paciente_numero_hc': result[10],
                     'medico_nombre': result[13],
                     'medico_id': result[14],

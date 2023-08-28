@@ -13,6 +13,7 @@ class ProductividadPrestacion(models.Model):
     codigo = fields.Char(string='Código', required=True, tracking=True)
     active = fields.Boolean(string='Activo', default=True, tracking=True)
     agrupador_prestaciones_id = fields.Many2one('hu_productividad.agrupador_prestaciones', string='Agrupador')
+    es_receta = fields.Boolean(string='Es receta', help='Cuando está en true, al calcular productividad busca no solo por el código del turno sino también por especialidad RECETAS MEDICAS')
 
     def name_get(self):
         res = []
