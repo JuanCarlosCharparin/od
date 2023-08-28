@@ -40,7 +40,8 @@ class Employee(models.Model):
                     filtros_turnos = [
                         ('employee_id', '=', self.id),
                         ('computado_en_productividad', '=', False),
-                        ('prestacion_codigo', 'in', codigo_prestaciones)
+                        ('prestacion_codigo', 'in', codigo_prestaciones),
+                        ('especialidad', '!=', 'RECETAS MEDICAS')
                     ]
 
                     if buscar_por_especialidad_recetas_medicas:
