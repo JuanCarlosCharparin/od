@@ -44,7 +44,11 @@ class Employee(models.Model):
                     ]
 
                     if buscar_por_especialidad_recetas_medicas:
-                        filtros_turnos.append(('especialidad', '=', 'RECETAS MEDICAS'))
+                        filtros_turnos = [
+                            ('employee_id', '=', self.id),
+                            ('computado_en_productividad', '=', False),
+                            '|', ('prestacion_codigo', 'in', codigo_prestaciones), ('especialidad', '=', 'RECETAS MEDICAS')
+                        ]
 
                     #En caso de corresponder agrega los filtros por día y horario
                     if metodo_calculo_employee.horario_especifico:
