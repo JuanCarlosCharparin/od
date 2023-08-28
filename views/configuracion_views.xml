@@ -69,6 +69,7 @@
                         <field name="name"/>
                         <field name="codigo"/>
                         <field name="agrupador_prestaciones_id"/>
+                        <field name="es_receta"/>
                         <field name="active"/>
                     </group>
                 </sheet>
