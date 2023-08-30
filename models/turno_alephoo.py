@@ -353,7 +353,6 @@ ORDER BY
         results = cursor.fetchall()
         for result in results:
             turno_existente = self.search([
-                ('turno_id', '=', result[0]),
                 ('item_turno_id', '=', result[33]),
                 ('prestacion_codigo', '=', result[21]),
             ])
