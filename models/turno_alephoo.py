@@ -12,6 +12,7 @@ class Productividad(models.Model):
 
     employee_id = fields.Many2one('hr.employee', string='Empleado')
     turno_id = fields.Integer(string='Turno ID')
+    item_turno_id = fields.Integer(string='Item turno ID')
     mes = fields.Char(string='Mes')
     fecha = fields.Date(string='Fecha')
     dia = fields.Selection(
@@ -130,7 +131,8 @@ SELECT
     NOT ISNULL(recp.id), 
     rec.numero, 
     ''
-  ) AS REC_NRO 
+  ) AS REC_NRO ,
+  bi.id AS BONOITEMID
 FROM 
   turno_programado AS tp 
   INNER JOIN persona AS p ON (tp.persona_id = p.id) 
@@ -264,7 +266,8 @@ SELECT
     NOT ISNULL(recp.id), 
     rec.numero, 
     ''
-  ) AS REC_NRO 
+  ) AS REC_NRO,
+  bi.id AS BONOITEMID
 FROM 
   turno_programado AS tp 
   INNER JOIN persona AS p ON (tp.persona_id = p.id) 
@@ -351,6 +354,7 @@ ORDER BY
         for result in results:
             turno_existente = self.search([
                 ('turno_id', '=', result[0]),
+                ('item_turno_id', '=', result[33]),
                 ('prestacion_codigo', '=', result[21]),
             ])
             if not turno_existente:
@@ -358,6 +362,7 @@ ORDER BY
                 self.create({
                     'employee_id': empleado_id,
                     'turno_id': result[0],
+                    'item_turno_id': result[33],
                     'mes': result[1],
                     'paciente_nombre': result[2],
                     'paciente_dni': result[3],
