@@ -27,7 +27,7 @@ class Productividad(models.Model):
 
     #Acción planificada
     def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10):
-        logger.debug('----PRODUCTIVIDAD---- Inicio')
+        logger.error('----PRODUCTIVIDAD---- Inicio')
 
         dia_actual = datetime.now().day
         mes_actual = datetime.now().month
@@ -39,11 +39,11 @@ class Productividad(models.Model):
         if mes == mes_actual and anio == anio_actual and dia_actual <= 10:
             raise ValidationError('No es posible crear la productividad del mes actual ya que aún no termina el período de facturación de turnos. Se generará a partir del día 10.')
 
-        logger.debug('----PRODUCTIVIDAD---- Previa a buscar o crear productividad')
+        logger.error('----PRODUCTIVIDAD---- Previa a buscar o crear productividad')
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
 
-        logger.debug('----PRODUCTIVIDAD---- Previa a get empleados')
+        logger.error('----PRODUCTIVIDAD---- Previa a get empleados')
 
         empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad(mes=mes, anio=anio, limite=limite_empleados)
         if not empleados and productividad.estado == 'en_calculo':
@@ -51,7 +51,7 @@ class Productividad(models.Model):
             return
         importe_total_productividad = productividad.importe_total
 
-        logger.debug('----PRODUCTIVIDAD---- Previa a bucle de empleados')
+        logger.error('----PRODUCTIVIDAD---- Previa a bucle de empleados')
 
         for empleado in empleados:
             calculos_productividad_empleado = empleado.calcular_productividad(mes, anio)
