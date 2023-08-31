@@ -4,10 +4,6 @@ from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from datetime import datetime
 
-import logging
-logger = logging.getLogger(__package__)
-
-
 class Productividad(models.Model):
     _name = 'hu_productividad.productividad'
     _description = 'Productividad'
@@ -43,9 +39,6 @@ class Productividad(models.Model):
             productividad.estado = 'calculo_completo'
             return
         importe_total_productividad = productividad.importe_total
-
-        logger.error('----PRODUCTIVIDAD---- Previa a bucle de empleados')
-
         for empleado in empleados:
             calculos_productividad_empleado = empleado.calcular_productividad(mes, anio)
             productividad_empleado = self.env['hu_productividad.productividad_empleado'].create({
