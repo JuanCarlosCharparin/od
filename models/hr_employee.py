@@ -5,6 +5,9 @@ from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
+import logging
+logger = logging.getLogger(__package__)
+
 
 class Employee(models.Model):
     _inherit = 'hr.employee'
@@ -17,7 +20,13 @@ class Employee(models.Model):
         primer_dia_mes_actual = datetime(anio, mes, 1)
         primer_dia_mes_anterior = primer_dia_mes_actual - relativedelta(months=1)
         ultimo_dia_mes_anterior = (primer_dia_mes_actual - timedelta(days=1)).replace(hour=23, minute=59)
+
+        logger.error('----PRODUCTIVIDAD---- Inicio sincro alephoo')
+
         self.env['hu_productividad.turno_alephoo'].sincronizar_datos_alephoo(anio, mes, primer_dia_mes_anterior, ultimo_dia_mes_anterior, self.id_alephoo)
+
+        logger.error('----PRODUCTIVIDAD---- FIN sincro alephoo')
+
         calculos_productividad = []
         for metodo_calculo_employee in self.metodo_calculo_employee_ids:
             if metodo_calculo_employee.metodo_calculo_id.active:
