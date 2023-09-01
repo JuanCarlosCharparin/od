@@ -4,6 +4,8 @@ from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from datetime import datetime
 
+#@TODO crear reglas de registro para que el permiso usuario solo pueda ver su productividad
+
 class Productividad(models.Model):
     _name = 'hu_productividad.productividad'
     _description = 'Productividad'

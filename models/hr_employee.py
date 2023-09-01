@@ -59,25 +59,27 @@ class Employee(models.Model):
 
                     turnos_alephoo = self.env['hu_productividad.turno_alephoo'].search(filtros_turnos)
 
+                    cantidad_prestaciones = 0
+                    total_facturado = 0
+                    for turno_alephoo in turnos_alephoo:
+                        cantidad_prestaciones += turno_alephoo.prestacion_cantidad
+                        total_facturado += turno_alephoo.importe_total
+
                     importe = 0
                     if turnos_alephoo:
                         turnos_alephoo.write({'computado_en_productividad': True})
 
                         #Calculo por puntaje: (Cantidad prestac de alephoo - Base) * Valor del punto) * Tipo_punto.valor
                         if metodo_calculo_variable.forma_calculo == 'puntaje':
-                            importe = (len(turnos_alephoo) - metodo_calculo_variable.base) * metodo_calculo_variable.valor_punto * metodo_calculo_variable.tipo_punto_id.valor
+                            importe = (cantidad_prestaciones - metodo_calculo_variable.base) * metodo_calculo_variable.valor_punto * metodo_calculo_variable.tipo_punto_id.valor
 
                         #Calculo por porcentaje_facturado: (sumatoria del total de lo facturado por esa prestación) * %
                         elif metodo_calculo_variable.forma_calculo == 'porcentaje_facturado':
-                            total_facturado = 0
-                            for turno_alephoo in turnos_alephoo:
-                                total_facturado += turno_alephoo.importe_total
-
                             importe = total_facturado * metodo_calculo_variable.porcentaje / 100
 
                         #Calculo por monto_fijo_cantidad: cantidad de turnos de esa prestación * monto fijo
                         elif metodo_calculo_variable.forma_calculo == 'monto_fijo_cantidad':
-                            importe = len(turnos_alephoo) * metodo_calculo_variable.valor_monto_fijo
+                            importe = cantidad_prestaciones * metodo_calculo_variable.valor_monto_fijo
 
                         #Calculo por monto_fijo
                         elif metodo_calculo_variable.forma_calculo == 'monto_fijo':
@@ -85,12 +87,12 @@ class Employee(models.Model):
 
                         #Calculo por formula_vieja: ((Cantidad de prestac de alephoo  * valor del punto) - Base) * Tipo_punto.valor
                         elif metodo_calculo_variable.forma_calculo == 'formula_vieja':
-                            importe = ((len(turnos_alephoo) * metodo_calculo_variable.valor_punto) - metodo_calculo_variable.base) * metodo_calculo_variable.tipo_punto_id.valor
+                            importe = ((cantidad_prestaciones * metodo_calculo_variable.valor_punto) - metodo_calculo_variable.base) * metodo_calculo_variable.tipo_punto_id.valor
 
                     calculos_productividad.append({
                         'turno_alephoo_ids': turnos_alephoo.ids,
-                        'importe': importe,
-                        'cantidad_practicas_realizadas': len(turnos_alephoo),
+                        'importe': importe if importe > 0 else 0,
+                        'cantidad_practicas_realizadas': cantidad_prestaciones,
                         'metodo_calculo_id': metodo_calculo_employee.metodo_calculo_id.id,
                         'horario': metodo_calculo_employee.get_nombre_horario(),
                         'metodo_calculo_variable_id': metodo_calculo_variable.id,
