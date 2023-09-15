@@ -12,6 +12,7 @@ class MetodoCalculoEmpleado(models.Model):
 
     employee_id = fields.Many2one('hr.employee', string='Empleado', required=True)
     metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de calculo', required=True)
+    especialidad = fields.Char(string='Especialidad', help='En caso de estar vacío se contemplarán todas las especialidades')
     horario_especifico = fields.Boolean(string='Horario específico', default=False)
     dia = fields.Selection(
         string='Día',

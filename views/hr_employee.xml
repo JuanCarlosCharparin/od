@@ -14,6 +14,7 @@
                         <field name="metodo_calculo_employee_ids">
                             <tree editable="bottom">
                                 <field name="metodo_calculo_id"/>
+                                <field name="especialidad"/>
                                 <field name="horario_especifico"/>
                                 <field name="dia" attrs="{'readonly': [('horario_especifico', '=', False)], 'required': [('horario_especifico', '=', True)]}"/>
                                 <field name="hora_desde" widget="float_time" attrs="{'readonly': [('horario_especifico', '=', False)], 'required': [('horario_especifico', '=', True)]}"/>
