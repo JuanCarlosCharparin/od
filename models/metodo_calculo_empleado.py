@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 class MetodoCalculoEmpleado(models.Model):
     _name = 'hu_productividad.metodo_calculo_employee'
     _description = 'Productividad - Método de calculo empleado'
-    _order = 'horario_especifico desc'
+    _order = 'horario_especifico desc, especialidad'
 
     employee_id = fields.Many2one('hr.employee', string='Empleado', required=True)
     metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de calculo', required=True)
