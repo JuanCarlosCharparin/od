@@ -92,81 +92,8 @@ class Productividad(models.Model):
 
         return productividad
 
-
-class ProductividadEmpleado(models.Model):
-    _name = 'hu_productividad.productividad_empleado'
-    _description = 'Productividad - Productividad empleado'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-
-
-    productividad_id = fields.Many2one('hu_productividad.productividad', string='Productividad')
-    employee_id = fields.Many2one('hr.employee', string='Empleado', tracking=True)
-    importe = fields.Float(string='Importe', tracking=True)
-    productividad_empleado_detalle_ids = fields.One2many('hu_productividad.productividad_empleado_detalle', 'productividad_empleado_id')
-
-
-class ProductividadEmpleadoDetalle(models.Model):
-    _name = 'hu_productividad.productividad_empleado_detalle'
-    _description = 'Productividad - Productividad empleado detalle'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-
-    productividad_empleado_id = fields.Many2one('hu_productividad.productividad_empleado', string='Productividad empleado')
-    importe = fields.Float(string='Importe', tracking=True)
-    cantidad_practicas_realizadas = fields.Integer(string='Cantidad de prácticas realizadas', tracking=True)
-    metodo_calculo_id = fields.Many2one('hu_productividad.metodo_calculo', string='Método de Cálculo', tracking=True)
-    horario = fields.Char(string='Horario', tracking=True)
-    metodo_calculo_variable_id = fields.Many2one('hu_productividad.metodo_calculo_variable', string='Variable de método de cálculo', tracking=True)
-    prod_empleado_det_turno_alephoo_ids = fields.One2many('hu_productividad.prod_empleado_det_turno_alephoo', 'productividad_emp_detalle_id')
-
-    #Datos de la variable de método de calculo que serán persistidos
-    forma_calculo = fields.Selection([
-        ('puntaje', 'Por puntaje'),
-        ('porcentaje_facturado', 'Porcentaje facturado'),
-        ('monto_fijo_cantidad', 'Monto fijo por cantidad'),
-        ('monto_fijo', 'Monto fijo'),
-        ('formula_vieja', 'Fórmula vieja'),
-    ], string='Forma de Cálculo')
-    base = fields.Integer(string='Base')
-    tipo_punto_id = fields.Many2one('hu_productividad.tipo_punto', string='Tipo de punto')
-    valor_punto = fields.Float(string='Valor punto')
-    porcentaje = fields.Integer(string='Porcentaje')
-    valor_monto_fijo = fields.Float(string='Valor monto fijo ($)')
-
-    #Campos relacionados
-    #@TODO Los campos relaciones met_calc_variable_prestacion_ids y met_calc_variable_agrup_prestaciones_ids deberían ser almacenados xq si se cambia en el método de calculo,
-    #@TODO también se cambia acá
-    met_calc_variable_prestacion_ids = fields.Many2many('hu_productividad.prestacion', related='metodo_calculo_variable_id.prestacion_ids', string='Prestaciones incluídas')
-    met_calc_variable_agrup_prestaciones_ids = fields.Many2many('hu_productividad.agrupador_prestaciones', related='metodo_calculo_variable_id.agrupador_prestaciones_ids', string='Agrupadores de prestaciones incluídos')
-    productividad_empleado_employee_id = fields.Many2one('hr.employee', related='productividad_empleado_id.employee_id')
-
-
-#Almacena la relación entre productividad_empleado_detalle y el turno alephoo
-class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
-    _name = 'hu_productividad.prod_empleado_det_turno_alephoo'
-    _description = 'Productividad - Productividad empleado detalle - Turno alephoo'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
-
-    productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
-    turno_alephoo_id = fields.Many2one('hu_productividad.turno_alephoo', string='Turno Alephoo', tracking=True)
-    #@TODO permitir incluir o no incluir el ítem
-    incluido = fields.Boolean(string='Incluído', default=True, help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos', tracking=True)
-
-    #Campos relacionados de turno alephoo
-    turno_alephoo_turno_id = fields.Integer(related='turno_alephoo_id.turno_id')
-    turno_alephoo_fecha = fields.Date(related='turno_alephoo_id.fecha')
-    turno_alephoo_hora = fields.Float(related='turno_alephoo_id.hora')
-    turno_alephoo_estado = fields.Char(related='turno_alephoo_id.estado')
-    turno_alephoo_paciente_nombre = fields.Char(related='turno_alephoo_id.paciente_nombre')
-    turno_alephoo_paciente_dni = fields.Char(related='turno_alephoo_id.paciente_dni')
-    turno_alephoo_prestacion_nombre = fields.Char(related='turno_alephoo_id.prestacion_nombre')
-    turno_alephoo_prestacion_codigo = fields.Char(related='turno_alephoo_id.prestacion_codigo')
-    turno_alephoo_prestacion_cantidad = fields.Integer(related='turno_alephoo_id.prestacion_cantidad')
-
-    def incluir_item(self):
-        #Marcar turno_alephoo como computado_en_productividad False
-        #Recalcular la productividad de productividad_empleado_detalle
-        return
-
-    def excluir_item(self):
-        return
-
+    def recalcular_importe_total(self):
+        importe_total = 0
+        for productividad_empleado in self.productividad_empleado_ids:
+            importe_total += productividad_empleado.importe
+        self.importe_total = importe_total

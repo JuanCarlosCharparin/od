@@ -1,5 +1,42 @@
 <?xml version="1.0"?>
 <odoo>
+    <!-- Acción de Crear Productividad empleado detalle - Turno alephoo-->
+    <record id="action_crear_crear_prod_empleado_det_turno_alephoo" model="ir.actions.act_window">
+        <field name="name">Crear Productividad empleado detalle - Turno alephoo</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hu_productividad.crear_prod_empleado_det_turno_alephoo</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+        <!-- Vista de formulario de Crear Productividad empleado detalle - Turno alephoo-->
+    <record model="ir.ui.view" id="hu_productividad_crear_prod_empleado_det_turno_alephoo_form">
+        <field name="name">hu.productividad.crear_prod_empleado_det_turno_alephoo.form</field>
+        <field name="model">hu_productividad.crear_prod_empleado_det_turno_alephoo</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="fecha"/>
+                            <field name="hora"/>
+                            <field name="paciente_dni"/>
+                            <field name="paciente_nombre"/>
+                        </group>
+                        <group>
+                            <field name="prestacion_codigo"/>
+                            <field name="prestacion_cantidad"/>
+                            <field name="importe_total"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="guardar_y_cerrar" string="Guardar y cerrar" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
     <!-- Vista de Lista Productividad -->
     <record model="ir.ui.view" id="hu_productividad_productividad_lista">
@@ -131,8 +168,14 @@
                     </group>
                     <notebook>
                         <page name="page_turnos" string="Turnos">
+                            <button name="%(hu_productividad.action_crear_crear_prod_empleado_det_turno_alephoo)d"
+                                    type="action"
+                                    class="btn-primary"
+                                    style="margin-bottom: 10px;">
+                                <span class="o_stat_text">Agregar manualmente</span>
+                            </button>
                             <field name="prod_empleado_det_turno_alephoo_ids" mode="tree,kanban">
-                                <tree>
+                                <tree editable="bottom">
                                     <field name="turno_alephoo_turno_id" readonly="1"/>
                                     <field name="turno_alephoo_fecha" readonly="1"/>
                                     <field name="turno_alephoo_hora" widget="float_time" readonly="1"/>
@@ -140,7 +183,10 @@
                                     <field name="turno_alephoo_paciente_dni" readonly="1"/>
                                     <field name="turno_alephoo_prestacion_codigo" readonly="1"/>
                                     <field name="turno_alephoo_prestacion_cantidad" readonly="1"/>
-                                    <field name="incluido" readonly="1"/>
+                                    <field name="turno_alephoo_agregado_manualmente" readonly="1"/>
+                                    <field name="incluido" readonly="1" force_save="1"/>
+                                    <button name="incluir_item" icon="fa-plus" string="" type="object" attrs="{'invisible': [('incluido', '=', True)]}" confirm="¿Está seguro de agregar el item?"/>
+                                    <button name="excluir_item" icon="fa-minus" string="" type="object" attrs="{'invisible': [('incluido', '=', False)]}" confirm="¿Está seguro de quitar el item?"/>
                                 </tree>
                             </field>
                         </page>
