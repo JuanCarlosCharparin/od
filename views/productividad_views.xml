@@ -1,5 +1,58 @@
 <?xml version="1.0"?>
 <odoo>
+
+<!--    @TODO Agregar menú Mi productividad-->
+
+    <!--Acción de Productividad empleado llamada por el botón en la productividad-->
+    <record id="action_productividad_empleado" model="ir.actions.act_window">
+        <field name="name">Detalle productividad</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hu_productividad.productividad_empleado</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('productividad_id', '=', active_id)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se encontraron registros
+            </p>
+            <p>
+                ...
+            </p>
+        </field>
+    </record>
+
+    <!--Vista árbol Productividad empleado-->
+    <record id="hu_productividad_productividad_empleado_tree" model="ir.ui.view">
+        <field name="name">hu_productividad.productividad_empleado.tree</field>
+        <field name="model">hu_productividad.productividad_empleado</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="employee_id" readonly="1"/>
+                <field name="importe" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--Vista de búsqueda Productividad empleado-->
+    <record id="hu_productividad_productividad_empleado_search" model="ir.ui.view">
+        <field name="name">hu_productividad.productividad_empleado.search</field>
+        <field name="model">hu_productividad.productividad_empleado</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id" string="Empleado"/>
+                <field name="employee_job_id" string="Puesto de trabajo"/>
+                <field name="employee_id" string="Etiquetas" filter_domain="[('employee_id.category_ids.name', 'ilike', self)]"/>
+                <group expand="0" string="Agrupar por">
+                    <filter
+                        string="Puesto de trabajo"
+                        name="job_id"
+                        domain="[]"
+                        context="{'group_by': 'employee_job_id'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- Acción de Crear Productividad empleado detalle - Turno alephoo-->
     <record id="action_crear_crear_prod_empleado_det_turno_alephoo" model="ir.actions.act_window">
         <field name="name">Crear Productividad empleado detalle - Turno alephoo</field>
@@ -46,7 +99,7 @@
             <tree>
                 <field name="create_date" readonly="1" string="Fecha de creación"/>
                 <field name="name" readonly="1"/>
-                <field name="importe_total" readonly="1"/>
+                <field name="importe_total" readonly="1" groups="hu_productividad.hu_productividad_group_responsable,hu_productividad.hu_productividad_group_admin"/>
                 <field name="estado" readonly="1"/>
             </tree>
         </field>
@@ -62,6 +115,13 @@
                     <field name="estado" widget="statusbar" clickable="False"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(hu_productividad.action_productividad_empleado)d"
+                                type="action" class="oe_stat_button" icon="fa-money"
+                                context="{'default_productividad_id': active_id}">
+                            <span class="o_stat_text">Detalle</span>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
@@ -71,7 +131,7 @@
                             <field name="mes" readonly="1"/>
                         </group>
                         <group>
-                            <field name="importe_total" readonly="1"/>
+                            <field name="importe_total" readonly="1" groups="hu_productividad.hu_productividad_group_responsable,hu_productividad.hu_productividad_group_admin"/>
                         </group>
                     </group>
                     <notebook>

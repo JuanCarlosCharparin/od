@@ -14,6 +14,9 @@ class ProductividadEmpleado(models.Model):
     importe = fields.Float(string='Importe', tracking=True)
     productividad_empleado_detalle_ids = fields.One2many('hu_productividad.productividad_empleado_detalle', 'productividad_empleado_id')
 
+    #Campos relaciones
+    employee_job_id = fields.Many2one('hr.job', related='employee_id.job_id', store=True)
+
     def recalcular_importe(self):
         importe = 0
         for productividad_empleado_detalle in self.productividad_empleado_detalle_ids:
@@ -110,7 +113,6 @@ class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
 
     productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
     turno_alephoo_id = fields.Many2one('hu_productividad.turno_alephoo', string='Turno Alephoo', tracking=True)
-    #@TODO permitir incluir o no incluir el ítem
     incluido = fields.Boolean(string='Incluído', default=True, help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos', tracking=True)
 
     #Campos relacionados de turno alephoo
