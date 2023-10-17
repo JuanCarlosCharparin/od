@@ -17,7 +17,8 @@ class Productividad(models.Model):
     importe_total = fields.Integer(string='Importe total calculado')
     estado = fields.Selection(selection=[
         ('en_calculo', 'En proceso de cálculo'),
-        ('calculo_completo', 'Cálculo completo'),
+        ('calculo_completo', 'Cálculo aut. completo'),
+        ('ajustes_manuales', 'Ajustes manuales'),
         ('a_pagar', 'A pagar'),
         ('pagado', 'Pagado')
     ], string='Estado', default='en_calculo', tracking=True)
