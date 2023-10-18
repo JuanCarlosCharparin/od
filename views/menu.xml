@@ -9,7 +9,23 @@
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Vacío
+                    No hay registros
+                  </p>
+                  <p>
+                    ...
+                  </p>
+            </field>
+        </record>
+
+        <record id="hu_mi_productividad_action" model="ir.actions.act_window">
+            <field name="name">Mi productividad</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hu_productividad.productividad_empleado</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_mi_productividad': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay registros
                   </p>
                   <p>
                     ...
@@ -24,7 +40,7 @@
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Vacío
+                    No hay registros
                   </p>
                   <p>
                     ...
@@ -91,16 +107,19 @@
 
 
         <!-- Menu principal -->
-        <menuitem id="hu_productividad_menu" name="Productividad" sequence="2" action="hu_productividad_action" web_icon="hu_productividad,static/description/icono_productividad.png"/>
+        <menuitem id="hu_productividad_menu" name="Productividad" sequence="2" web_icon="hu_productividad,static/description/icono_productividad.png"/>
 
         <!-- Productividad  -->
-        <menuitem id="submenu_hu_productividad_productividad" name="Productividad" parent="hu_productividad_menu" sequence="1" action="hu_productividad_action"/>
+        <menuitem id="submenu_hu_productividad_productividad" name="Productividad" parent="hu_productividad_menu" sequence="1" action="hu_productividad_action" groups="hu_productividad.hu_productividad_group_usuario"/>
+
+        <!-- Mi Productividad  -->
+        <menuitem id="submenu_hu_productividad_mi_productividad" name="Mi productividad" parent="hu_productividad_menu" sequence="2" action="hu_mi_productividad_action"/>
 
         <!-- Empleados -->
-        <menuitem id="submenu_hu_productividad_empleado" name="Empleados" parent="hu_productividad_menu" sequence="2" action="hu_productividad_empleado_action"/>
+        <menuitem id="submenu_hu_productividad_empleado" name="Empleados" parent="hu_productividad_menu" sequence="3" action="hu_productividad_empleado_action" groups="hu_productividad.hu_productividad_group_usuario"/>
 
         <!-- Submenú Configuración -->
-        <menuitem id="submenu_hu_productividad_configuracion" name="Configuración" parent="hu_productividad_menu" sequence="3"/>
+        <menuitem id="submenu_hu_productividad_configuracion" name="Configuración" parent="hu_productividad_menu" sequence="4" groups="hu_productividad.hu_productividad_group_responsable"/>
         <menuitem id="submenu_hu_productividad_metodo_calculo" name="Métodos de Cálculo" parent="submenu_hu_productividad_configuracion" sequence="1" action="action_hu_productividad_metodo_calculo"/>
         <menuitem id="submenu_hu_productividad_agrupador_prestaciones" name="Agrupador de prestaciones" parent="submenu_hu_productividad_configuracion" sequence="2" action="action_hu_productividad_agrupador_prestaciones"/>
         <menuitem id="submenu_hu_productividad_prestacion" name="Prestaciones" parent="submenu_hu_productividad_configuracion" sequence="3" action="action_hu_productividad_prestacion"/>

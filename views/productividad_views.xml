@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
 
-<!--    @TODO Agregar menú Mi productividad-->
-
     <!--Acción de Productividad empleado llamada por el botón en la productividad-->
     <record id="action_productividad_empleado" model="ir.actions.act_window">
         <field name="name">Detalle productividad</field>
@@ -27,6 +25,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="employee_id" readonly="1"/>
+                <field name="productividad_name" readonly="1"/>
                 <field name="importe" readonly="1"/>
             </tree>
         </field>
@@ -41,6 +40,11 @@
                 <field name="employee_id" string="Empleado"/>
                 <field name="employee_job_id" string="Puesto de trabajo"/>
                 <field name="employee_id" string="Etiquetas" filter_domain="[('employee_id.category_ids.name', 'ilike', self)]"/>
+                <filter
+                    string="Mi productividad"
+                    name="mi_productividad"
+                    domain="[('employee_id.user_id', '=', uid)]"
+                />
                 <group expand="0" string="Agrupar por">
                     <filter
                         string="Puesto de trabajo"
@@ -99,7 +103,7 @@
             <tree>
                 <field name="create_date" readonly="1" string="Fecha de creación"/>
                 <field name="name" readonly="1"/>
-                <field name="importe_total" readonly="1" groups="hu_productividad.hu_productividad_group_responsable,hu_productividad.hu_productividad_group_admin"/>
+                <field name="importe_total" readonly="1"/>
                 <field name="estado" readonly="1"/>
             </tree>
         </field>
@@ -131,7 +135,7 @@
                             <field name="mes" readonly="1"/>
                         </group>
                         <group>
-                            <field name="importe_total" readonly="1" groups="hu_productividad.hu_productividad_group_responsable,hu_productividad.hu_productividad_group_admin"/>
+                            <field name="importe_total" readonly="1"/>
                         </group>
                     </group>
                     <notebook>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="hu_productividad_group_profesional_medico" model="res.groups">
+            <field name="name">Profesional médico</field>
+            <field name="category_id" ref="hu_productividad_application"/>
+        </record>
+
         <record id="hu_productividad_group_usuario" model="res.groups">
             <field name="name">Usuario</field>
             <field name="category_id" ref="hu_productividad_application"/>

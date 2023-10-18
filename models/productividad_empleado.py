@@ -7,6 +7,7 @@ class ProductividadEmpleado(models.Model):
     _name = 'hu_productividad.productividad_empleado'
     _description = 'Productividad - Productividad empleado'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'productividad_name DESC'
 
 
     productividad_id = fields.Many2one('hu_productividad.productividad', string='Productividad')
@@ -16,6 +17,7 @@ class ProductividadEmpleado(models.Model):
 
     #Campos relaciones
     employee_job_id = fields.Many2one('hr.job', related='employee_id.job_id', store=True)
+    productividad_name = fields.Char(related='productividad_id.name')
 
     def recalcular_importe(self):
         importe = 0

@@ -32,6 +32,7 @@
 
         # Security
         'security/res.groups.xml',
+        'security/ir.rules.xml',
         'security/ir.model.access.csv',
     ],
 }
