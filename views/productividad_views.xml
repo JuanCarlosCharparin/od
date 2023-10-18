@@ -235,7 +235,8 @@
                             <button name="%(hu_productividad.action_crear_crear_prod_empleado_det_turno_alephoo)d"
                                     type="action"
                                     class="btn-primary"
-                                    style="margin-bottom: 10px;">
+                                    style="margin-bottom: 10px;"
+                                    groups="hu_productividad.hu_productividad_group_responsable">
                                 <span class="o_stat_text">Agregar manualmente</span>
                             </button>
                             <field name="prod_empleado_det_turno_alephoo_ids" mode="tree,kanban">
@@ -249,8 +250,8 @@
                                     <field name="turno_alephoo_prestacion_cantidad" readonly="1"/>
                                     <field name="turno_alephoo_agregado_manualmente" readonly="1"/>
                                     <field name="incluido" readonly="1" force_save="1"/>
-                                    <button name="incluir_item" icon="fa-plus" string="" type="object" attrs="{'invisible': [('incluido', '=', True)]}" confirm="¿Está seguro de agregar el item?"/>
-                                    <button name="excluir_item" icon="fa-minus" string="" type="object" attrs="{'invisible': [('incluido', '=', False)]}" confirm="¿Está seguro de quitar el item?"/>
+                                    <button name="incluir_item" icon="fa-plus" string="" type="object" attrs="{'invisible': [('incluido', '=', True)]}" confirm="¿Está seguro de agregar el item?" groups="hu_productividad.hu_productividad_group_responsable"/>
+                                    <button name="excluir_item" icon="fa-minus" string="" type="object" attrs="{'invisible': [('incluido', '=', False)]}" confirm="¿Está seguro de quitar el item?" groups="hu_productividad.hu_productividad_group_responsable"/>
                                 </tree>
                             </field>
                         </page>
