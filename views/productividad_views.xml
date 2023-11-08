@@ -177,6 +177,13 @@
                     </group>
                     <notebook>
                         <page name="page_detalle" string="Detalle">
+                            <button name="recalcular_manualmente"
+                                    type="object"
+                                    class="btn-danger"
+                                    style="margin-bottom: 10px;"
+                                    groups="hu_productividad.hu_productividad_group_responsable">
+                                <span class="o_stat_text">Recalcular</span>
+                            </button>
                             <field name="productividad_empleado_detalle_ids" widget="section_and_note_one2many" mode="tree,kanban">
                                 <tree>
                                     <field name="metodo_calculo_id" readonly="1"/>
@@ -248,10 +255,12 @@
                                     <field name="turno_alephoo_paciente_dni" readonly="1"/>
                                     <field name="turno_alephoo_prestacion_codigo" readonly="1"/>
                                     <field name="turno_alephoo_prestacion_cantidad" readonly="1"/>
+                                    <field name="turno_alephoo_importe_total" readonly="1"/>
                                     <field name="turno_alephoo_agregado_manualmente" readonly="1"/>
                                     <field name="incluido" readonly="1" force_save="1"/>
                                     <button name="incluir_item" icon="fa-plus" string="" type="object" attrs="{'invisible': [('incluido', '=', True)]}" confirm="¿Está seguro de agregar el item?" groups="hu_productividad.hu_productividad_group_responsable"/>
                                     <button name="excluir_item" icon="fa-minus" string="" type="object" attrs="{'invisible': [('incluido', '=', False)]}" confirm="¿Está seguro de quitar el item?" groups="hu_productividad.hu_productividad_group_responsable"/>
+                                    <button name="archivar_item" icon="fa-trash" string="" type="object" attrs="{'invisible': ['|', ('incluido', '=', True), ('turno_alephoo_agregado_manualmente', '=', False)]}" confirm="¿Está seguro de eliminar el item?" groups="hu_productividad.hu_productividad_group_responsable"/>
                                 </tree>
                             </field>
                         </page>

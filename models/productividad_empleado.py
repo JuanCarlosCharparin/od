@@ -19,6 +19,11 @@ class ProductividadEmpleado(models.Model):
     employee_job_id = fields.Many2one('hr.job', related='employee_id.job_id', store=True)
     productividad_name = fields.Char(related='productividad_id.name')
 
+    def recalcular_manualmente(self):
+        for productividad_empleado_detalle in self.productividad_empleado_detalle_ids:
+            productividad_empleado_detalle.recalcular_productividad_empleado_detalle()
+
+
     def recalcular_importe(self):
         importe = 0
         for productividad_empleado_detalle in self.productividad_empleado_detalle_ids:
@@ -59,7 +64,7 @@ class ProductividadEmpleadoDetalle(models.Model):
     met_calc_variable_agrup_prestaciones_ids = fields.Many2many('hu_productividad.agrupador_prestaciones', related='metodo_calculo_variable_id.agrupador_prestaciones_ids', string='Agrupadores de prestaciones incluídos')
     productividad_empleado_employee_id = fields.Many2one('hr.employee', related='productividad_empleado_id.employee_id')
 
-    #Permite recalcular el importe de productividad cuando se agregaron o quitaron prácticas manualmente
+    #Permite recalcular el importe de productividad cuando se agregaron o quitaron prácticas manualmente o cuando se usa el botón "Recalcular"
     def recalcular_productividad_empleado_detalle(self):
         prod_empleado_det_turno_alephoo_incluidos = self.env['hu_productividad.prod_empleado_det_turno_alephoo'].search([
             ('productividad_emp_detalle_id', '=', self.id),
@@ -116,18 +121,20 @@ class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
     productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
     turno_alephoo_id = fields.Many2one('hu_productividad.turno_alephoo', string='Turno Alephoo', tracking=True)
     incluido = fields.Boolean(string='Incluído', default=True, help='Indica si el turno será incluído en el calculo de productividad. En caso de no estarlo, puede incluirse en futuros cálculos', tracking=True)
+    active = fields.Boolean(string='Activo', default=True)
 
     #Campos relacionados de turno alephoo
-    turno_alephoo_turno_id = fields.Integer(related='turno_alephoo_id.turno_id')
-    turno_alephoo_fecha = fields.Date(related='turno_alephoo_id.fecha')
-    turno_alephoo_hora = fields.Float(related='turno_alephoo_id.hora')
-    turno_alephoo_estado = fields.Char(related='turno_alephoo_id.estado')
-    turno_alephoo_paciente_nombre = fields.Char(related='turno_alephoo_id.paciente_nombre')
-    turno_alephoo_paciente_dni = fields.Char(related='turno_alephoo_id.paciente_dni')
-    turno_alephoo_prestacion_nombre = fields.Char(related='turno_alephoo_id.prestacion_nombre')
-    turno_alephoo_prestacion_codigo = fields.Char(related='turno_alephoo_id.prestacion_codigo')
-    turno_alephoo_prestacion_cantidad = fields.Integer(related='turno_alephoo_id.prestacion_cantidad')
-    turno_alephoo_agregado_manualmente = fields.Boolean(related='turno_alephoo_id.agregado_manualmente')
+    turno_alephoo_turno_id = fields.Integer(related='turno_alephoo_id.turno_id', store=True)
+    turno_alephoo_fecha = fields.Date(related='turno_alephoo_id.fecha', store=True)
+    turno_alephoo_hora = fields.Float(related='turno_alephoo_id.hora', store=True)
+    turno_alephoo_estado = fields.Char(related='turno_alephoo_id.estado', store=True)
+    turno_alephoo_paciente_nombre = fields.Char(related='turno_alephoo_id.paciente_nombre', store=True)
+    turno_alephoo_paciente_dni = fields.Char(related='turno_alephoo_id.paciente_dni', store=True)
+    turno_alephoo_prestacion_nombre = fields.Char(related='turno_alephoo_id.prestacion_nombre', store=True)
+    turno_alephoo_prestacion_codigo = fields.Char(related='turno_alephoo_id.prestacion_codigo', store=True)
+    turno_alephoo_prestacion_cantidad = fields.Integer(related='turno_alephoo_id.prestacion_cantidad', store=True)
+    turno_alephoo_agregado_manualmente = fields.Boolean(related='turno_alephoo_id.agregado_manualmente', store=True)
+    turno_alephoo_importe_total = fields.Float(related='turno_alephoo_id.importe_total', store=True)
 
     def incluir_item(self):
         if not self.incluido:
@@ -138,6 +145,10 @@ class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
         if self.incluido:
             self.incluido = False
             self.productividad_emp_detalle_id.recalcular_productividad_empleado_detalle()
+
+    def archivar_item(self):
+        if not self.incluido:
+            self.active = False
 
 class CrearProdEmpleadoDetalleTurnoAlephoo(models.TransientModel):
     _name = 'hu_productividad.crear_prod_empleado_det_turno_alephoo'
