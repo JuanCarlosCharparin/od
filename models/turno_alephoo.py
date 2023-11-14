@@ -90,10 +90,7 @@ SELECT
   ) AS ESTADO_TURNO, 
   pl.nombre AS COBERTURA, 
   bo.numero AS NUMERO, 
-  IF(
-    bo.numero_autorizacion != '', bo.numero_autorizacion, 
-    bi.numero_autorizacion
-  ) AS NUMERO_AUTORIZACION, 
+  ia.numeroAutorizacion AS NUMERO_AUTORIZACION,
   pre.nombre AS PRESTACION, 
   (
     CASE WHEN (
@@ -106,7 +103,7 @@ SELECT
   ) AS DETALLE, 
   pre.codigo AS CODIGO, 
   bi.cantidad AS CANTIDAD, 
-  coti.precio AS PRECIO, 
+  bi.monto/100 AS PRECIO,
   coti.copago AS COPAGO, 
   (PRECIO + COPAGO) * CANTIDAD AS TOTAL, 
   (
@@ -139,10 +136,11 @@ FROM
   INNER JOIN persona AS p ON (tp.persona_id = p.id) 
   INNER JOIN bono AS bo ON (bo.turnoprogramado_id = tp.id) 
   INNER JOIN tipobono AS tb ON (bo.tipobono_id = tb.id) 
-  INNER JOIN bonoitem AS bi ON (bi.bono_id = bo.id) 
-  INNER JOIN cotizacion AS coti ON (bi.cotizacion_id = coti.id) 
+  INNER JOIN item_bono AS bi ON ( bi.bono_id = bo.id )
+  LEFT JOIN itemAutorizacion ia on ia.itemBonoId = bi.id
+  INNER JOIN prestacion AS pre ON (bi.prestacion_id = pre.id)
+  INNER JOIN cotizacion AS coti ON ( coti.prestacion_id = pre.id ) 
   INNER JOIN plan AS pl ON (bo.plan_id = pl.id) 
-  INNER JOIN prestacion AS pre ON (coti.prestacion_id = pre.id) 
   INNER JOIN agenda AS ag ON (tp.agenda_id = ag.id) 
   INNER JOIN asignacion AS asig ON (ag.asignacion_id = asig.id) 
   INNER JOIN especialidad AS es ON (asig.especialidad_id = es.id) 
@@ -225,10 +223,7 @@ SELECT
   ) AS ESTADO_TURNO, 
   pl.nombre AS COBERTURA, 
   bo.numero AS NUMERO, 
-  IF(
-    bo.numero_autorizacion != '', bo.numero_autorizacion, 
-    bi.numero_autorizacion
-  ) AS NUMERO_AUTORIZACION, 
+  ia.numeroAutorizacion AS NUMERO_AUTORIZACION,
   pre.nombre AS PRESTACION, 
   (
     CASE WHEN (
@@ -241,7 +236,7 @@ SELECT
   ) AS DETALLE, 
   pre.codigo AS CODIGO, 
   bi.cantidad AS CANTIDAD, 
-  coti.precio AS PRECIO, 
+  bi.monto/100 AS PRECIO,
   coti.copago AS COPAGO, 
   (PRECIO + COPAGO) * CANTIDAD AS TOTAL, 
   (
@@ -274,10 +269,11 @@ FROM
   INNER JOIN persona AS p ON (tp.persona_id = p.id) 
   INNER JOIN bono AS bo ON (bo.turnoprogramado_id = tp.id) 
   INNER JOIN tipobono AS tb ON (bo.tipobono_id = tb.id) 
-  INNER JOIN bonoitem AS bi ON (bi.bono_id = bo.id) 
-  INNER JOIN cotizacion AS coti ON (bi.cotizacion_id = coti.id) 
+  INNER JOIN item_bono AS bi ON ( bi.bono_id = bo.id )
+  LEFT JOIN itemAutorizacion ia on ia.itemBonoId = bi.id
+  INNER JOIN prestacion AS pre ON (bi.prestacion_id = pre.id)
+  INNER JOIN cotizacion AS coti ON ( coti.prestacion_id = pre.id ) 
   INNER JOIN plan AS pl ON (bo.plan_id = pl.id) 
-  INNER JOIN prestacion AS pre ON (coti.prestacion_id = pre.id) 
   INNER JOIN agenda AS ag ON (tp.agenda_id = ag.id) 
   INNER JOIN asignacion AS asig ON (ag.asignacion_id = asig.id) 
   INNER JOIN especialidad AS es ON (asig.especialidad_id = es.id) 
