@@ -85,7 +85,7 @@ class Productividad(models.Model):
         ], limit=1)
         if not productividad:
             productividad = self.create({
-                'name': str(anio) + ' - ' + str(mes),
+                'name': str(anio) + ' - ' + str(mes).zfill(2),
                 'anio': anio,
                 'mes': mes,
             })

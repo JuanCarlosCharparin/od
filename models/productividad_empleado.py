@@ -14,10 +14,14 @@ class ProductividadEmpleado(models.Model):
     employee_id = fields.Many2one('hr.employee', string='Empleado', tracking=True)
     importe = fields.Float(string='Importe', tracking=True)
     productividad_empleado_detalle_ids = fields.One2many('hu_productividad.productividad_empleado_detalle', 'productividad_empleado_id')
+    enviado = fields.Boolean(string='Enviado por email')
+    error_envio = fields.Boolean(string='Error de envío')
+    detalle_error_envio = fields.Text(string='Detalle de error de envío')
 
     #Campos relaciones
     employee_job_id = fields.Many2one('hr.job', related='employee_id.job_id', store=True)
     productividad_name = fields.Char(related='productividad_id.name')
+    productividad_estado = fields.Selection(related='productividad_id.estado')
 
     def recalcular_manualmente(self):
         for productividad_empleado_detalle in self.productividad_empleado_detalle_ids:
@@ -29,6 +33,32 @@ class ProductividadEmpleado(models.Model):
         for productividad_empleado_detalle in self.productividad_empleado_detalle_ids:
             importe += productividad_empleado_detalle.importe
         self.importe = importe
+
+    def enviar_productividad_por_email(self, force_send=False):
+        if not self.enviado and not self.error_envio:
+            try:
+                template_id = self.env.ref('hu_productividad.template_envio_productividad')
+                if not template_id:
+                    raise ValidationError('Plantilla de email no encontrada: hu_productividad.template_envio_productividad')
+
+                user_destinatario = self.employee_id.user_id
+                if not user_destinatario:
+                    raise ValidationError('Usuario relacionado al empleado no encontrado')
+
+                if template_id and user_destinatario:
+                    email_values = {
+                        'email_from': 'Hospital Universitario <controldestock@hospital.uncu.edu.ar>',
+                        'email_to': user_destinatario.email,
+                        'auto_delete': False,
+                        'scheduled_date': False,
+                    }
+                    template_id.send_mail(self.id, force_send=force_send, email_values=email_values)
+
+                    self.enviado = True
+
+            except Exception as e:
+                self.error_envio = True
+                self.detalle_error_envio = 'Error al enviar mail de productividad: ' + str(e)
 
 
 class ProductividadEmpleadoDetalle(models.Model):
