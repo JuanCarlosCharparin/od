@@ -25,12 +25,16 @@ class ProductividadEmpleado(models.Model):
 
     def recalcular_manualmente(self):
         self.eliminar_calculo_productividad_empleado()
-        self.env['hu_productividad.productividad'].generar_productividad_mensual(
+        self.sudo().env['hu_productividad.productividad'].generar_productividad_mensual(
             mes=self.productividad_id.mes,
             anio=self.productividad_id.anio,
             limite_empleados=False,
             empleado_ids=[self.employee_id.id]
         )
+
+        nota = '<p><strong>Se realizó el recalculo manual de la productividad</strong></p>' + \
+               '<p>Usuario que lo realizó: ' + self.env.user.name + '</p>'
+        self.message_post(body=nota)
 
     def eliminar_calculo_productividad_empleado(self):
         prod_empleado_detalles_turno_alephoo = self.env['hu_productividad.prod_empleado_det_turno_alephoo'].search([
