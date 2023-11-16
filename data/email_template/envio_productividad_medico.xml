@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+        <record id="template_envio_productividad_medico" model="mail.template">
+            <field name="name">HU - Notificación de productividad a médico</field>
+            <field name="model_id" ref="model_hu_productividad_productividad_empleado"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="email_from">Hospital Universitario &lt;controldestock@hospital.uncu.edu.ar&gt;</field>
+            <field name="email_to"></field>
+            <field name="subject">Nueva liquidación de productividad período ${object.productividad_name}</field>
+            <field name="body_html">
+            <![CDATA[
+<p>Estimado/a&nbsp;${object.employee_id.name}:</p><p><br></p><p>Se le notifica que se encuentra disponible una nueva liquidación de productividad para el período&nbsp;${object.productividad_name} por el monto de $&nbsp;${object.importe}</p><p><br></p><p>Para consultar el detalle puede hacerlo ingresando a&nbsp;https://bienesdeuso.hospital.uncu.edu.ar/ menú "Productividad"</p><p><br></p><p>Saludos cordiales.</p><p><br></p><p>RRHH Hospital Universitario</p>
+                ]]>
+            </field>
+        </record>
+    </data>
+</odoo>

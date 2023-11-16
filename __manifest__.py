@@ -28,6 +28,7 @@
 
         # Data
         'data/ir.module.category.csv',
+        'data/email_template/envio_productividad_medico.xml',
         'data/crons.xml',
 
         # Security

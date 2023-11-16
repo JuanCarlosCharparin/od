@@ -24,8 +24,38 @@ class ProductividadEmpleado(models.Model):
     productividad_estado = fields.Selection(related='productividad_id.estado')
 
     def recalcular_manualmente(self):
-        for productividad_empleado_detalle in self.productividad_empleado_detalle_ids:
-            productividad_empleado_detalle.recalcular_productividad_empleado_detalle()
+        self.eliminar_calculo_productividad_empleado()
+        self.env['hu_productividad.productividad'].generar_productividad_mensual(
+            mes=self.productividad_id.mes,
+            anio=self.productividad_id.anio,
+            limite_empleados=False,
+            empleado_ids=[self.employee_id.id]
+        )
+
+    def eliminar_calculo_productividad_empleado(self):
+        prod_empleado_detalles_turno_alephoo = self.env['hu_productividad.prod_empleado_det_turno_alephoo'].search([
+            ('productividad_emp_detalle_id', '=', self.productividad_empleado_detalle_ids.ids)
+        ])
+
+        #Marca en false el campo computado_en_productividad de los turno_alephoo
+        turnos_alephoo_ids = []
+        for det_turno_alephoo in prod_empleado_detalles_turno_alephoo:
+            turnos_alephoo_ids.append(det_turno_alephoo.turno_alephoo_id.id)
+        if turnos_alephoo_ids:
+            turnos_alephoo = self.env['hu_productividad.turno_alephoo'].search([('id', 'in', turnos_alephoo_ids)])
+            turnos_alephoo.write({
+                'computado_en_productividad': False
+            })
+
+        #Elimina los registros de prod_empleado_det_turno_alephoo
+        prod_empleado_detalles_turno_alephoo.sudo().unlink()
+
+        #Elimina los registros de productividad_empleado_detalle
+        self.productividad_empleado_detalle_ids.sudo().unlink()
+
+        #Cambio los importes
+        self.importe = 0
+        self.productividad_id.recalcular_importe_total()
 
 
     def recalcular_importe(self):
@@ -37,7 +67,7 @@ class ProductividadEmpleado(models.Model):
     def enviar_productividad_por_email(self, force_send=False):
         if not self.enviado and not self.error_envio:
             try:
-                template_id = self.env.ref('hu_productividad.template_envio_productividad')
+                template_id = self.env.ref('hu_productividad.template_envio_productividad_medico')
                 if not template_id:
                     raise ValidationError('Plantilla de email no encontrada: hu_productividad.template_envio_productividad')
 
@@ -94,7 +124,7 @@ class ProductividadEmpleadoDetalle(models.Model):
     met_calc_variable_agrup_prestaciones_ids = fields.Many2many('hu_productividad.agrupador_prestaciones', related='metodo_calculo_variable_id.agrupador_prestaciones_ids', string='Agrupadores de prestaciones incluídos')
     productividad_empleado_employee_id = fields.Many2one('hr.employee', related='productividad_empleado_id.employee_id')
 
-    #Permite recalcular el importe de productividad cuando se agregaron o quitaron prácticas manualmente o cuando se usa el botón "Recalcular"
+    #Permite recalcular el importe de productividad cuando se agregaron o quitaron prácticas manualmente
     def recalcular_productividad_empleado_detalle(self):
         prod_empleado_det_turno_alephoo_incluidos = self.env['hu_productividad.prod_empleado_det_turno_alephoo'].search([
             ('productividad_emp_detalle_id', '=', self.id),

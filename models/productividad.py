@@ -24,7 +24,7 @@ class Productividad(models.Model):
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
     #Acción planificada
-    def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10):
+    def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10, empleado_ids=[]):
         dia_actual = datetime.now().day
         mes_actual = datetime.now().month
         anio_actual = datetime.now().year
@@ -36,17 +36,29 @@ class Productividad(models.Model):
             raise ValidationError('No es posible crear la productividad del mes actual ya que aún no termina el período de facturación de turnos. Se generará a partir del día 10.')
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
-        empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad(mes=mes, anio=anio, limite=limite_empleados)
+
+        if empleado_ids:
+            empleados = self.env['hr.employee'].search([('id', 'in', empleado_ids)])
+        else:
+            empleados = self.env['hr.employee'].get_empleados_a_calcular_productividad(mes=mes, anio=anio, limite=limite_empleados)
+
         if not empleados and productividad.estado == 'en_calculo':
             productividad.estado = 'calculo_completo'
             return
         importe_total_productividad = productividad.importe_total
         for empleado in empleados:
             calculos_productividad_empleado = empleado.calcular_productividad(mes, anio)
-            productividad_empleado = self.env['hu_productividad.productividad_empleado'].create({
-                'productividad_id': productividad.id,
-                'employee_id': empleado.id
-            })
+
+            productividad_empleado = self.env['hu_productividad.productividad_empleado'].search([
+                ('productividad_id', '=', productividad.id),
+                ('employee_id', '=', empleado.id)
+            ])
+            if not productividad_empleado:
+                productividad_empleado = self.env['hu_productividad.productividad_empleado'].create({
+                    'productividad_id': productividad.id,
+                    'employee_id': empleado.id
+                })
+
             importe_total_empleado = 0
             for calculo_pe in calculos_productividad_empleado:
                 productividad_empleado_detalle =self.env['hu_productividad.productividad_empleado_detalle'].create({
