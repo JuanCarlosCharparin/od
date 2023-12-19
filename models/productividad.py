@@ -109,3 +109,32 @@ class Productividad(models.Model):
         for productividad_empleado in self.productividad_empleado_ids:
             importe_total += productividad_empleado.importe
         self.importe_total = importe_total
+
+    # Acción planificada
+    def enviar_productividad_mensual_por_mail(self, mes=False, anio=False, limite=20, force_send=False, empleado_ids=[]):
+        if not mes or not anio:
+            mes = datetime.now().month
+            anio = datetime.now().year
+
+        productividad = self.buscar_o_crear_productividad(mes, anio)
+        if productividad.estado == 'a_pagar':
+            if empleado_ids:
+                criterio_busqueda = [
+                    ('productividad_id', '=', productividad.id),
+                    ('enviado', '=', False),
+                    ('error_envio', '=', False),
+                    ('importe', '>', 0),
+                    ('employee_id', 'in', empleado_ids)
+                ]
+            else:
+                criterio_busqueda = [
+                    ('productividad_id', '=', productividad.id),
+                    ('enviado', '=', False),
+                    ('error_envio', '=', False),
+                    ('importe', '>', 0)
+                ]
+
+            productividad_empleados_ids = self.env['hu_productividad.productividad_empleado'].search(criterio_busqueda, limit=limite)
+
+            for productividad_empleado in productividad_empleados_ids:
+                productividad_empleado.enviar_productividad_por_email(force_send)

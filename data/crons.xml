@@ -11,4 +11,14 @@
         <field name="numbercall">-1</field>
     </record>
 
+    <record id="ir_cron_enviar_productividad_mensual_por_mail" model="ir.cron">
+        <field name="name">HU - Enviar productividad mensual por mail</field>
+        <field name="model_id" ref="model_hu_productividad_productividad"/>
+        <field name="state">code</field>
+        <field name="code">model.enviar_productividad_mensual_por_mail()</field>
+        <field name="interval_number">10</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+    </record>
+
 </odoo>

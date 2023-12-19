@@ -69,7 +69,7 @@ class ProductividadEmpleado(models.Model):
         self.importe = importe
 
     def enviar_productividad_por_email(self, force_send=False):
-        if not self.enviado and not self.error_envio:
+        if not self.enviado and not self.error_envio and self.importe > 0:
             try:
                 template_id = self.env.ref('hu_productividad.template_envio_productividad_medico')
                 if not template_id:
