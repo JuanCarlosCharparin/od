@@ -23,6 +23,13 @@ class Productividad(models.Model):
     ], string='Estado', default='en_calculo', tracking=True)
     productividad_empleado_ids = fields.One2many('hu_productividad.productividad_empleado', 'productividad_id')
 
+    def write(self, vals):
+        for rec in self:
+            if rec.estado in ('a_pagar', 'pagado') and vals.get('importe_total') and vals.get('importe_total') != rec.importe_total:
+                raise ValidationError('No se pueden hacer cambios en la productividad una vez que está en estado A pagar o Pagado')
+
+        return super(Productividad, self).write(vals)
+
     #Acción planificada
     def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10, empleado_ids=[]):
         dia_actual = datetime.now().day

@@ -61,7 +61,6 @@ class ProductividadEmpleado(models.Model):
         self.importe = 0
         self.productividad_id.recalcular_importe_total()
 
-
     def recalcular_importe(self):
         importe = 0
         for productividad_empleado_detalle in self.productividad_empleado_detalle_ids:
@@ -93,7 +92,6 @@ class ProductividadEmpleado(models.Model):
             except Exception as e:
                 self.error_envio = True
                 self.detalle_error_envio = 'Error al enviar mail de productividad: ' + str(e)
-
 
 class ProductividadEmpleadoDetalle(models.Model):
     _name = 'hu_productividad.productividad_empleado_detalle'
@@ -173,7 +171,6 @@ class ProductividadEmpleadoDetalle(models.Model):
 
         self.productividad_empleado_id.recalcular_importe()
         self.productividad_empleado_id.productividad_id.recalcular_importe_total()
-
 
 
 #Almacena la relación entre productividad_empleado_detalle y el turno alephoo
