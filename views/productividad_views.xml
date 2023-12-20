@@ -172,7 +172,7 @@
                     <group>
                         <group>
                             <field name="productividad_name"/>
-                            <field name="importe"/>
+                            <field name="importe" readonly="1" force_save="1"/>
                         </group>
                         <group>
                         </group>
