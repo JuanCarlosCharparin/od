@@ -93,7 +93,9 @@ class Productividad(models.Model):
                     })
 
             productividad_empleado.importe = importe_total_empleado
-            importe_total_productividad += importe_total_empleado
+
+            if not empleado.no_incluir_en_importe_total_productividad:
+                importe_total_productividad += importe_total_empleado
 
         productividad.importe_total = importe_total_productividad
 
@@ -114,7 +116,8 @@ class Productividad(models.Model):
     def recalcular_importe_total(self):
         importe_total = 0
         for productividad_empleado in self.productividad_empleado_ids:
-            importe_total += productividad_empleado.importe
+            if not productividad_empleado.employee_id.no_incluir_en_importe_total_productividad:
+                importe_total += productividad_empleado.importe
         self.importe_total = importe_total
 
     # Acción planificada

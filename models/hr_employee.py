@@ -10,6 +10,7 @@ class Employee(models.Model):
 
     id_alephoo = fields.Integer(string='ID Alephoo')
     fecha_ultimo_calculo_productividad = fields.Datetime(string='Fecha de último cálculo de productividad')
+    no_incluir_en_importe_total_productividad = fields.Boolean(string='No incluir en importe total productividad')
     metodo_calculo_employee_ids = fields.One2many('hu_productividad.metodo_calculo_employee', 'employee_id', string='Métodos de cálculo')
 
     def calcular_productividad(self, mes, anio):
