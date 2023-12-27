@@ -127,7 +127,7 @@ class Productividad(models.Model):
             anio = datetime.now().year
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
-        if productividad.estado == 'a_pagar':
+        if productividad.estado in ('a_pagar', 'pagado'):
             if empleado_ids:
                 criterio_busqueda = [
                     ('productividad_id', '=', productividad.id),
