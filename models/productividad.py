@@ -32,15 +32,19 @@ class Productividad(models.Model):
 
     #Acción planificada
     def generar_productividad_mensual(self, mes=False, anio=False, limite_empleados=10, empleado_ids=[]):
-        dia_actual = datetime.now().day
         mes_actual = datetime.now().month
         anio_actual = datetime.now().year
         if not mes or not anio:
             mes = mes_actual
             anio = anio_actual
 
-        if mes == mes_actual and anio == anio_actual and dia_actual <= 10:
-            raise ValidationError('No es posible crear la productividad del mes actual ya que aún no termina el período de facturación de turnos. Se generará a partir del día 10.')
+        if mes == mes_actual and anio == anio_actual:
+            proxima_fecha_calculo_str = self.env["ir.config_parameter"].get_param("productividad_proxima_fecha_calculo", False)
+            if not proxima_fecha_calculo_str:
+                raise ValidationError('No es posible crear la productividad del mes actual ya que no está configurada la fecha de próximo cálculo.')
+            proxima_fecha_calculo = datetime.strptime(proxima_fecha_calculo_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S')
+            if datetime.now() <= proxima_fecha_calculo:
+                raise ValidationError('No es posible crear la productividad del mes actual ya que la próxima fecha de inicio es el día ' + proxima_fecha_calculo_str)
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
 

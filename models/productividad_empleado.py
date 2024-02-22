@@ -224,8 +224,8 @@ class CrearProdEmpleadoDetalleTurnoAlephoo(models.TransientModel):
     importe_total = fields.Float(string='Importe total prestación', required=True)
 
     def guardar_y_cerrar(self):
-        if self.prestacion_cantidad <= 0:
-            raise ValidationError('La cantidad de prestación realizada debe ser mayor a cero.')
+        if self.prestacion_cantidad == 0:
+            raise ValidationError('La cantidad de prestaciones debe ser distinto de cero.')
 
         productividad_emp_detalle = self.env['hu_productividad.productividad_empleado_detalle'].search([('id', '=', self._context.get('active_id'))])
         if productividad_emp_detalle:

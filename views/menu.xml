@@ -126,5 +126,25 @@
         <menuitem id="submenu_hu_productividad_tipo_punto" name="Tipos de Puntos" parent="submenu_hu_productividad_configuracion" sequence="4" action="action_hu_productividad_tipo_punto"/>
 
 
+<!--        Hereda la vista de Ajustes -> Opciones generales-->
+        <record id="hu_productividad_res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">hu_productividad.res.config.settings.view.form.inherit.pad</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <div id="about" position="before">
+                    <h2>Productividad</h2>
+                        <div class="row mt16 o_settings_container" name="productividad">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="content-group mt16">
+                                    <label for="productividad_proxima_fecha_calculo"/>
+                                    <field name="productividad_proxima_fecha_calculo"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </field>
+        </record>
+
     </data>
 </openerp>
