@@ -2,6 +2,8 @@ from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from datetime import datetime
 
+CODIGO_PRESTACION_MODIFICACION_MANUAL_IMPORTE = 'MODIFICACION MANUAL DE IMPORTE'
+
 
 class ProductividadEmpleado(models.Model):
     _name = 'hu_productividad.productividad_empleado'
@@ -140,9 +142,14 @@ class ProductividadEmpleadoDetalle(models.Model):
 
         cantidad_prestaciones = 0
         total_facturado = 0
+        importe_a_sumar = 0
         for turno_alephoo in turnos_alephoo:
             cantidad_prestaciones += turno_alephoo.prestacion_cantidad
             total_facturado += turno_alephoo.importe_total
+
+            #En caso de que se haya ingresado una modificación manual de importe lo va sumando en la variable importe_a_sumar y luego lo suma al total
+            if turno_alephoo.prestacion_codigo == CODIGO_PRESTACION_MODIFICACION_MANUAL_IMPORTE:
+                importe_a_sumar += turno_alephoo.importe_total
 
         importe = 0
         if turnos_alephoo:
@@ -165,6 +172,8 @@ class ProductividadEmpleadoDetalle(models.Model):
             # Calculo por formula_vieja: ((Cantidad de prestac de alephoo  * valor del punto) - Base) * Tipo_punto.valor
             elif self.metodo_calculo_variable_id.forma_calculo == 'formula_vieja':
                 importe = ((cantidad_prestaciones * self.metodo_calculo_variable_id.valor_punto) - self.metodo_calculo_variable_id.base) * self.metodo_calculo_variable_id.tipo_punto_id.valor
+
+        importe += importe_a_sumar
 
         self.importe = importe if importe > 0 else 0
         self.cantidad_practicas_realizadas = cantidad_prestaciones
@@ -215,20 +224,42 @@ class CrearProdEmpleadoDetalleTurnoAlephoo(models.TransientModel):
     _name = 'hu_productividad.crear_prod_empleado_det_turno_alephoo'
     _description = 'Productividad - Crear Productividad empleado detalle - Turno alephoo'
 
+    tipo = fields.Selection([
+            ('incorporacion_practicas', 'Incorporación de prácticas'),
+            ('modificacion_importe', 'Modificación de importe'),
+        ], string='Tipo'
+    )
     fecha = fields.Date(string='Fecha')
     hora = fields.Float(string='Hora')
     paciente_nombre = fields.Char(string='Nombre paciente')
     paciente_dni = fields.Char(string='DNI')
     prestacion_codigo = fields.Char(string='Código prestación', required=True)
     prestacion_cantidad = fields.Integer(string='Cantidad prestación', required=True)
-    importe_total = fields.Float(string='Importe total prestación', required=True)
+    importe_total = fields.Float(string='Importe total', required=True)
+
+    @api.onchange('tipo')
+    def set_prestacion_codigo_modificacion_importe(self):
+        for rec in self:
+            if rec.tipo == 'modificacion_importe':
+                rec.prestacion_codigo = CODIGO_PRESTACION_MODIFICACION_MANUAL_IMPORTE
+                rec.importe_total = 0
+            else:
+                rec.prestacion_codigo = ''
+                rec.importe_total = 0
 
     def guardar_y_cerrar(self):
-        if self.prestacion_cantidad == 0:
+        if self.tipo == 'incorporacion_practicas' and self.prestacion_cantidad == 0:
             raise ValidationError('La cantidad de prestaciones debe ser distinto de cero.')
 
         productividad_emp_detalle = self.env['hu_productividad.productividad_empleado_detalle'].search([('id', '=', self._context.get('active_id'))])
         if productividad_emp_detalle:
+            if self.tipo == 'modificacion_importe':
+                self.fecha = False
+                self.hora = False
+                self.paciente_nombre = False
+                self.paciente_dni = False
+                self.prestacion_cantidad = 0
+
             #Crea Turno alepho
             turno_alephoo = self.env['hu_productividad.turno_alephoo'].create({
                 'fecha': self.fecha,
@@ -251,11 +282,3 @@ class CrearProdEmpleadoDetalleTurnoAlephoo(models.TransientModel):
             productividad_emp_detalle.recalcular_productividad_empleado_detalle()
 
         return {'type': 'ir.actions.act_window_close'}
-
-    # @api.model
-    # def create(self, vals):
-    #     rec = super(CrearProdEmpleadoDetalleTurnoAlephoo, self).create(vals)
-    #
-    #
-    #
-    #     return rec

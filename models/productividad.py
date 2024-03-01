@@ -43,8 +43,14 @@ class Productividad(models.Model):
             if not proxima_fecha_calculo_str:
                 raise ValidationError('No es posible crear la productividad del mes actual ya que no está configurada la fecha de próximo cálculo.')
             proxima_fecha_calculo = datetime.strptime(proxima_fecha_calculo_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S')
+
+            #Si la fecha actual es menor a la fecha de prox cálculo no permite avanzar
             if datetime.now() <= proxima_fecha_calculo:
                 raise ValidationError('No es posible crear la productividad del mes actual ya que la próxima fecha de inicio es el día ' + proxima_fecha_calculo_str)
+
+            #Su la fecha actual es mayor a la fecha de próx calculo pero no es del mismo mes no permite avanzar
+            if datetime.now() >= proxima_fecha_calculo and (datetime.now().month != proxima_fecha_calculo.month or datetime.now().year != proxima_fecha_calculo.year):
+                raise ValidationError('No es posible crear la productividad del mes actual ya que la próxima fecha de inicio no está configurada para este mes.')
 
         productividad = self.buscar_o_crear_productividad(mes, anio)
 

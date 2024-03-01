@@ -74,7 +74,19 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
+                    <div class="oe_title">
+                        <label for="tipo"/>
+                        <field name="tipo"/>
+                    </div>
+                    <group attrs="{'invisible': [('tipo', '!=', 'modificacion_importe')]}">
+                        <group>
+                            <field name="importe_total" string="Importe"/>
+                        </group>
+                        <group>
+                            <field name="prestacion_codigo" readonly="1" force_save="1"/>
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('tipo', '!=', 'incorporacion_practicas')]}">
                         <group>
                             <field name="fecha"/>
                             <field name="hora"/>
@@ -84,7 +96,7 @@
                         <group>
                             <field name="prestacion_codigo"/>
                             <field name="prestacion_cantidad"/>
-                            <field name="importe_total"/>
+                            <field name="importe_total" string="Importe total prestación"/>
                         </group>
                     </group>
                 </sheet>
