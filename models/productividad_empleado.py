@@ -187,6 +187,7 @@ class ProductividadEmpleadoDetalleTurnoAlephoo(models.Model):
     _name = 'hu_productividad.prod_empleado_det_turno_alephoo'
     _description = 'Productividad - Productividad empleado detalle - Turno alephoo'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'turno_alephoo_fecha asc'
 
     productividad_emp_detalle_id = fields.Many2one('hu_productividad.productividad_empleado_detalle', string='Productividad empleado detalle')
     turno_alephoo_id = fields.Many2one('hu_productividad.turno_alephoo', string='Turno Alephoo', tracking=True)
