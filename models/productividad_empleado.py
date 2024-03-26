@@ -144,8 +144,11 @@ class ProductividadEmpleadoDetalle(models.Model):
         total_facturado = 0
         importe_a_sumar = 0
         for turno_alephoo in turnos_alephoo:
-            cantidad_prestaciones += turno_alephoo.prestacion_cantidad
-            total_facturado += turno_alephoo.importe_total
+            #Se valida que la cantidad de prestaciones sea distinta de cero para contabilizarlo ya que cuando agregan manualmente un
+            #ajuste de importe estaría sumando el importe al total facturado
+            if turno_alephoo.prestacion_cantidad != 0:
+                cantidad_prestaciones += turno_alephoo.prestacion_cantidad
+                total_facturado += turno_alephoo.importe_total
 
             #En caso de que se haya ingresado una modificación manual de importe lo va sumando en la variable importe_a_sumar y luego lo suma al total
             if turno_alephoo.prestacion_codigo == CODIGO_PRESTACION_MODIFICACION_MANUAL_IMPORTE:
