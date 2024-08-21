@@ -259,7 +259,7 @@ IF ((tb.id=1 OR tb.id=2) AND (bo.estado=5 OR bo.estado=6 ) ,
   WHERE bo6.tipobono_id = 10 AND bo6.turnoprogramado_id = bo.turnoprogramado_id )     
 ,0) = 0 AND 
   tp.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' 
-  AND (cc.id = 11) 
+  AND (cc.id = 11 OR cc.id = 14) 
   AND IF(ISNULL(con.evento_id),pr.id = {medico_id},con.personal_id = {medico_id}) 
   AND bo.estado = 7 
 GROUP BY 
