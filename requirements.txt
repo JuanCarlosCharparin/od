@@ -1,0 +1,12 @@
+wheel
+werkzeug==0.16.1
+psutil
+lxml
+Pillow
+babel
+odoorpc
+psycopg2-binary
+pytz
+pypdf2
+qrcode
+num2words
